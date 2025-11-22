@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>3D打印计算器</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+</head>
+<body>
+    <div class="container">
+        <div class="desktop-layout">
+            <div class="desktop-main">
+                <div class="page-container">
+                    <div class="main-scroll">
+                        <div class="card compact-form">
+                            <div class="card-header">
+                                <span class="card-title">打印设置</span>
+                            </div>
+                            <div class="settings-section">
+                                <h3 class="section-title">打印机设置</h3>
+                                <div class="form-item-row">
+                                    <div class="form-item select-container">
+                                        <label class="label" for="printerSelect">打印机型号</label>
+                                        <select class="select" id="printerSelect" autocomplete="off">
+                                            <option value="-1">请选择打印机型号</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-item input-container printer-input-container">
+                                        <label class="label" for="customPrinterName">自定义型号</label>
+                                        <input type="text" id="customPrinterName" placeholder="输入型号" class="input">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-item">
+                                        <label class="label" for="printerPower">打印机功率 (W)</label>
+                                        <input type="number" id="printerPower" placeholder="输入功率" class="input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
+                                    </div>
+                                    <div class="form-item">
+                                        <label class="label" for="electricityRate">电价 (¥/度)</label>
+                                        <input type="number" id="electricityRate" placeholder="输入电价" class="input" value="0.65" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-item">
+                                        <label class="label" for="printerCost">打印机价值 (¥)</label>
+                                        <input type="number" id="printerCost" placeholder="输入金额" class="input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
+                                    </div>
+                                    <div class="form-item">
+                                        <label class="label" for="printerLifespan">预计寿命 (小时)</label>
+                                        <input type="number" id="printerLifespan" placeholder="输入寿命" class="input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="settings-section">
+                                <h3 class="section-title">耗材设置</h3>
+                                <div id="filamentItemsContainer"></div>
+                                <button class="add-filament-btn" id="addFilamentBtn">+ 添加耗材</button>
+                            </div>
+                            <div class="settings-section">
+                                <h3 class="section-title">打印参数</h3>
+                                <div class="form-item">
+                                    <label class="label" for="printHours">打印时间(例0:90/1:30)</label>
+                                    <div class="time-group">
+                                        <div class="time-item">
+                                            <input type="number" id="printHours" placeholder="0" class="time-input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
+                                            <span class="time-label">小时</span>
+                                        </div>
+                                        <span class="time-separator">:</span>
+                                        <div class="time-item">
+                                            <input type="number" id="printMinutes" placeholder="0" class="time-input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
+                                            <span class="time-label">分钟(可超60)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-section">
+                        <div class="result-card">
+                            <div class="result-header">
+                                <span class="result-title">成本分析</span>
+                                <span class="result-subtitle">总计 <span id="totalHours">0.00</span> 小时</span>
+                            </div>
+                            <div class="cost-list">
+                                <div class="cost-item">
+                                    <span class="cost-name">材料成本</span>
+                                    <span class="cost-value">¥<span id="materialCost">0.00</span></span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-name">电力成本</span>
+                                    <span class="cost-value">¥<span id="electricityCost">0.00</span></span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-name">设备折旧</span>
+                                    <span class="cost-value">¥<span id="depreciationCost">0.00</span></span>
+                                </div>
+                            </div>
+                            <div class="total-cost">
+                                <span class="total-label">打印总成本</span>
+                                <span class="total-value">¥<span id="totalCost">0.00</span></span>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn reset" id="resetBtn">重新计算</button>
+                            <button class="btn save" id="saveBtn">保存记录</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="desktop-sidebar">
+                <div class="history-sidebar">
+                    <div class="sidebar-header">
+                        <span class="sidebar-title">历史记录</span>
+                        <span class="sidebar-subtitle">共 <span id="desktopRecordCount">0</span> 条记录</span>
+                    </div>
+                    <div class="history-list" id="desktopHistoryList">
+                    </div>
+                    <div class="sidebar-actions">
+                        <button class="btn clear" id="desktopClearBtn">清空全部</button>
+                        <button class="btn about" id="desktopAboutBtn">关于</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-bar">
+            <a href="index.html" class="tab-item active">
+                <span class="tab-icon calc-icon"></span>
+                <span class="tab-text">计算器</span>
+            </a>
+            <a href="history.html" class="tab-item">
+                <span class="tab-icon history-icon"></span>
+                <span class="tab-text">历史记录</span>
+            </a>
+        </div>
+    </div>
+    <div class="modal" id="remarkModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">添加备注</span>
+            </div>
+            <div class="modal-body">
+                <label class="visually-hidden" for="remarkInput">打印项目备注</label>
+                <input class="remark-input" id="remarkInput" placeholder="请输入打印项目备注（可为空）" maxlength="50">
+                <span class="input-tip">最多50个字符</span>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" id="cancelSaveBtn">取消</button>
+                <button class="modal-btn confirm" id="confirmSaveBtn">保存</button>
+            </div>
+        </div>
+    </div>
+    <script src="js/config.js"></script>
+    <script src="js/calculator.js"></script>
+    <script src="js/share.js"></script>
+    <script src="js/index.js"></script>
+    <script>
+        // 防止移动端输入框聚焦时页面缩放（改进版）
+        document.addEventListener('DOMContentLoaded', function() {
+            // 保存当前滚动位置
+            let scrollPosition = 0;
+            // 监听输入框聚焦事件
+            var inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(function(input) {
+                // 聚焦时保存当前位置
+                input.addEventListener('focus', function() {
+                    scrollPosition = window.scrollY;
+                    console.log('聚焦，保存位置:', scrollPosition);
+                });
+                // 失去焦点时恢复位置
+                input.addEventListener('blur', function() {
+                    // 延迟执行，确保虚拟键盘完全收起
+                    setTimeout(function() {
+                        console.log('失去焦点，恢复位置:', scrollPosition);
+                        // 恢复到原来的滚动位置，而不是强制到顶部
+                        window.scrollTo(0, scrollPosition);
+                        // 强制触发resize事件，让浏览器重新计算布局
+                        window.dispatchEvent(new Event('resize'));
+                    }, 100);
+                });
+            });
+            // 防止双击缩放
+            document.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+            // 防止手势缩放
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+            });
+            document.addEventListener('gesturechange', function(e) {
+                e.preventDefault();
+            });
+            document.addEventListener('gestureend', function(e) {
+                e.preventDefault();
+            });
+        });
+        // 全局变量，用于在HTML中调用
+        let indexPage;
+    </script>
+</body>
+</html>

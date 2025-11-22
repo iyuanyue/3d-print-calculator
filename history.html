@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历史记录 - 3D打印计算器</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/history.css">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+</head>
+<body>
+    <div class="container">
+        <div class="page-container">
+            <div class="header">
+                <span class="title">历史记录</span>
+                <span class="subtitle">共 <span id="recordCount">0</span> 条记录</span>
+            </div>
+            <div class="tab-nav">
+                <button class="tab-nav-btn active" data-tab="history">历史记录</button>
+                <button class="tab-nav-btn" id="aboutTabBtn">关于</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="empty-state hidden" id="emptyState">
+                    <span class="empty-icon">📝</span>
+                    <span class="empty-text">暂无历史记录</span>
+                    <span class="empty-tip">在计算页面保存记录后，会显示在这里</span>
+                </div>
+            </div>
+            <div class="bottom-actions hidden" id="bottomActions">
+                <button class="btn clear" id="clearAllBtn">清空全部</button>
+            </div>
+        </div>
+        <div class="tab-bar">
+            <a href="index.html" class="tab-item">
+                <span class="tab-icon calc-icon"></span>
+                <span class="tab-text">计算器</span>
+            </a>
+            <a href="history.html" class="tab-item active">
+                <span class="tab-icon history-icon"></span>
+                <span class="tab-text">历史记录</span>
+            </a>
+        </div>
+    </div>
+    <div class="modal confirm-modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">确认删除</span>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-text" id="confirmText">确定要删除这条记录吗？</div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" id="cancelDeleteBtn">取消</button>
+                <button class="modal-btn confirm" id="confirmDeleteBtn">确定</button>
+            </div>
+        </div>
+    </div>
+    <script src="js/config.js"></script>
+    <script src="js/share.js"></script>
+    <script src="js/history.js"></script>
+</body>
+</html>
