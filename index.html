@@ -3,26 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>3D打印计算器</title>
+    <title>3D打印计算器 · 3D打印成本估算</title>
+    <meta name="description" content="专业的3D打印成本计算器，通过输入打印机参数、耗材信息和时间，快速估算材料、电力和折旧成本，助您精准控制打印预算。">
+    <link rel="canonical" href="https://3d.iyuanyue.com/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="3D打印计算器">
+    <meta property="og:title" content="3D打印计算器 · 3D打印成本估算">
+    <meta property="og:description" content="通过打印机功率、耗材价格与打印时间，快速估算材料、电力与设备折旧成本。">
+    <meta property="og:url" content="https://3d.iyuanyue.com/">
+    <meta name="theme-color" content="#eef1f6">
+    <script>
+        /* 主题初始化：在样式表加载前决定深浅色，避免闪烁 */
+        (function () {
+            try {
+                var KEY = '3dpc-theme';
+                var q = new URLSearchParams(location.search).get('theme');
+                var m = (q === 'light' || q === 'dark') ? q : (localStorage.getItem(KEY) || 'auto');
+                var sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var dark = m === 'dark' || (m === 'auto' && sysDark);
+                var el = document.documentElement;
+                el.setAttribute('data-theme-mode', m);
+                el.setAttribute('data-theme', dark ? 'dark' : 'light');
+                var meta = document.querySelector('meta[name="theme-color"]');
+                if (meta) meta.setAttribute('content', dark ? '#070b10' : '#eef1f6');
+            } catch (e) { }
+        })();
+    </script>
+    <style>html{background:#eef1f6}html[data-theme="dark"]{background:#070b10}</style>
+    <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/index.css">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
     <script async src="https://019aabda-1de0-7eae-9460-7fbf4c8caa7a.spst2.com/ustat.js"></script>
-    <meta name="description" content="专业的3D打印成本计算器，通过输入打印机参数、耗材信息和时间，快速估算材料、电力和折旧成本，助您精准控制打印预算。">
 </head>
 <body>
     <div class="container">
         <div class="desktop-layout">
             <div class="desktop-main">
                 <div class="page-container">
+                    <header class="app-header">
+                        <div class="brand">
+                            <span class="brand-mark" aria-hidden="true">3D</span>
+                            <div class="brand-text">
+                                <h1 class="brand-title">3D打印计算器</h1>
+                                <p class="brand-sub">成本预估 · <strong>v1.2.5</strong></p>
+                            </div>
+                        </div>
+                        <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换主题">
+                            <span class="theme-icon icon-auto" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.2" /><path d="M12 3.8a8.2 8.2 0 0 1 0 16.4z" fill="currentColor" stroke="none" /></svg></span>
+                            <span class="theme-icon icon-light" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6" /></svg></span>
+                            <span class="theme-icon icon-dark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 13.2A8.6 8.6 0 1 1 10.8 3.5a6.7 6.7 0 0 0 9.7 9.7z" /></svg></span>
+                        </button>
+                    </header>
                     <div class="main-scroll">
                         <div class="card compact-form">
-                            <div class="card-header">
-                                <span class="card-title">3D打印计算器v1.2.5</span>
-                            </div>
                             <div class="settings-section">
-                                <h3 class="section-title">打印机设置</h3>
+                                <h2 class="section-title">打印机设置</h2>
                                 <div class="form-item-row">
                                     <div class="form-item select-container">
                                         <label class="label" for="printerSelect">打印机型号</label>
@@ -57,12 +94,12 @@
                                 </div>
                             </div>
                             <div class="settings-section">
-                                <h3 class="section-title">耗材设置</h3>
+                                <h2 class="section-title">耗材设置</h2>
                                 <div id="filamentItemsContainer"></div>
                                 <button class="add-filament-btn" id="addFilamentBtn">+ 添加耗材</button>
                             </div>
                             <div class="settings-section">
-                                <h3 class="section-title">打印参数</h3>
+                                <h2 class="section-title">打印参数</h2>
                                 <div class="form-item">
                                     <label class="label" for="printHours">打印时间(例0:90/1:30)</label>
                                     <div class="time-group">
@@ -112,11 +149,11 @@
                     </div>
                 </div>
             </div>
-            <div class="desktop-sidebar">
+            <aside class="desktop-sidebar">
                 <div class="history-sidebar">
                     <div class="sidebar-header">
                         <span class="sidebar-title">历史记录</span>
-                        <span class="sidebar-subtitle">共 <span id="desktopRecordCount">0</span> 条记录</span>
+                        <span class="sidebar-subtitle">共 <span id="desktopRecordCount">0</span> 条</span>
                     </div>
                     <div class="history-list" id="desktopHistoryList">
                     </div>
@@ -125,18 +162,18 @@
                         <button class="btn about" id="desktopAboutBtn">关于</button>
                     </div>
                 </div>
-            </div>
+            </aside>
         </div>
-        <div class="tab-bar">
+        <nav class="tab-bar">
             <a href="index.html" class="tab-item active">
-                <span class="tab-icon calc-icon"></span>
+                <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.2" y="2.6" width="15.6" height="18.8" rx="3.4" /><path d="M8 7.6h8" /><path d="M8.4 12.2h.01M12 12.2h.01M15.6 12.2h.01M8.4 16.4h.01M12 16.4h.01M15.6 16.4h.01" /></svg></span>
                 <span class="tab-text">计算器</span>
             </a>
             <a href="history.html" class="tab-item">
-                <span class="tab-icon history-icon"></span>
+                <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6" /><path d="M12 7.4V12l3.1 2" /></svg></span>
                 <span class="tab-text">历史记录</span>
             </a>
-        </div>
+        </nav>
     </div>
     <div class="modal" id="remarkModal">
         <div class="modal-content">
@@ -154,56 +191,40 @@
             </div>
         </div>
     </div>
+    <script src="js/theme.js"></script>
     <script src="js/config.js"></script>
     <script src="js/calculator.js"></script>
     <script src="js/share.js"></script>
     <script src="js/index.js"></script>
     <script>
-        // 防止移动端输入框聚焦时页面缩放（改进版）
-        document.addEventListener('DOMContentLoaded', function() {
-            // 保存当前滚动位置
+        // 防止移动端输入框聚焦时页面缩放
+        document.addEventListener('DOMContentLoaded', function () {
             let scrollPosition = 0;
-            // 监听输入框聚焦事件
-            var inputs = document.querySelectorAll('input, textarea, select');
-            inputs.forEach(function(input) {
-                // 聚焦时保存当前位置
-                input.addEventListener('focus', function() {
+            document.querySelectorAll('input, textarea, select').forEach(function (input) {
+                input.addEventListener('focus', function () {
                     scrollPosition = window.scrollY;
-                    console.log('聚焦，保存位置:', scrollPosition);
                 });
-                // 失去焦点时恢复位置
-                input.addEventListener('blur', function() {
-                    // 延迟执行，确保虚拟键盘完全收起
-                    setTimeout(function() {
-                        console.log('失去焦点，恢复位置:', scrollPosition);
-                        // 恢复到原来的滚动位置，而不是强制到顶部
+                input.addEventListener('blur', function () {
+                    setTimeout(function () {
                         window.scrollTo(0, scrollPosition);
-                        // 强制触发resize事件，让浏览器重新计算布局
                         window.dispatchEvent(new Event('resize'));
                     }, 100);
                 });
             });
-            // 防止双击缩放
-            document.addEventListener('dblclick', function(e) {
+            document.addEventListener('dblclick', function (e) {
                 e.preventDefault();
             }, { passive: false });
-            // 防止手势缩放
-            document.addEventListener('gesturestart', function(e) {
+            document.addEventListener('gesturestart', function (e) {
                 e.preventDefault();
             });
-            document.addEventListener('gesturechange', function(e) {
+            document.addEventListener('gesturechange', function (e) {
                 e.preventDefault();
             });
-            document.addEventListener('gestureend', function(e) {
+            document.addEventListener('gestureend', function (e) {
                 e.preventDefault();
             });
         });
-        // 全局变量，用于在HTML中调用
-        let indexPage;
     </script>
 </body>
 
 </html>
-
-
-

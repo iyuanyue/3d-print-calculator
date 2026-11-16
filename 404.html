@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面不存在 · 3D打印计算器</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#eef1f6">
+    <script>
+        (function () {
+            try {
+                var KEY = '3dpc-theme';
+                var q = new URLSearchParams(location.search).get('theme');
+                var m = (q === 'light' || q === 'dark') ? q : (localStorage.getItem(KEY) || 'auto');
+                var sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var dark = m === 'dark' || (m === 'auto' && sysDark);
+                var el = document.documentElement;
+                el.setAttribute('data-theme-mode', m);
+                el.setAttribute('data-theme', dark ? 'dark' : 'light');
+            } catch (e) { }
+        })();
+    </script>
+    <style>html{background:#eef1f6}html[data-theme="dark"]{background:#070b10}</style>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .notfound {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: 28px;
+            text-align: center;
+        }
+        .notfound-code {
+            font-size: 68px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            background: linear-gradient(140deg, var(--brand), var(--brand-strong));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .notfound-title {
+            font-size: 19px;
+            font-weight: 700;
+        }
+        .notfound-text {
+            max-width: 320px;
+            font-size: 13.5px;
+            color: var(--text-muted);
+        }
+        .notfound-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .notfound-actions .btn {
+            padding: 0 20px;
+        }
+    </style>
+</head>
+<body>
+    <main class="notfound">
+        <div class="notfound-code">404</div>
+        <h1 class="notfound-title">页面走丢了</h1>
+        <p class="notfound-text">您访问的页面不存在或已被移动。可以回到计算器重新开始，或查看历史记录。</p>
+        <div class="notfound-actions">
+            <a class="btn save" href="index.html">返回计算器</a>
+            <a class="btn reset" href="history.html">历史记录</a>
+        </div>
+    </main>
+    <script src="js/theme.js"></script>
+</body>
+</html>

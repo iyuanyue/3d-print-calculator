@@ -100,7 +100,8 @@
             const emptyState = document.getElementById('emptyState');
             const bottomActions = document.getElementById('bottomActions');
             if (!historyList) return;
-            historyList.innerHTML = '';
+            // 只移除记录节点，保留 #emptyState（它在 #historyList 内部，整体清空会导致空状态节点丢失）
+            historyList.querySelectorAll('.history-item').forEach(node => node.remove());
             if (history.length === 0) {
                 if (emptyState) emptyState.classList.remove('hidden');
                 if (bottomActions) bottomActions.classList.add('hidden');
@@ -431,23 +432,7 @@
             const toast = document.createElement('div');
             toast.className = `auto-toast ${type}`;
             toast.textContent = message;
-            // 添加样式
-            toast.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: ${type === 'error' ? '#ff4757' : '#07C160'};
-                color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                font-size: 14px;
-                font-weight: 500;
-                z-index: 3000;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            `;
+            toast.setAttribute('role', 'status');
             document.body.appendChild(toast);
             // 显示动画
             setTimeout(() => {

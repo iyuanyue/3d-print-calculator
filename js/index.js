@@ -966,10 +966,19 @@
             if (history.length === 0) {
                 const empty = document.createElement('div');
                 empty.className = 'empty-state';
+                const icon = document.createElement('span');
+                icon.className = 'empty-icon';
+                icon.setAttribute('aria-hidden', 'true');
+                icon.textContent = '📝';
                 const span = document.createElement('span');
                 span.className = 'empty-text';
                 span.textContent = '暂无记录';
+                const tip = document.createElement('span');
+                tip.className = 'empty-tip';
+                tip.textContent = '在计算页面保存后会显示在这里';
+                empty.appendChild(icon);
                 empty.appendChild(span);
+                empty.appendChild(tip);
                 historyList.appendChild(empty);
                 return;
             }
@@ -1158,13 +1167,7 @@
             const toast = document.createElement('div');
             toast.className = `auto-toast ${type}`;
             toast.textContent = message;
-            toast.style.cssText = `
-                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                background: ${type === 'error' ? '#ff4757' : '#07C160'}; color: white;
-                padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 500;
-                z-index: 3000; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                opacity: 0; transition: opacity 0.3s ease;
-            `;
+            toast.setAttribute('role', 'status');
             document.body.appendChild(toast);
             setTimeout(() => toast.style.opacity = '1', 10);
             setTimeout(() => {

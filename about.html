@@ -2,240 +2,293 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>关于 - 3D打印计算器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>关于 · 3D打印计算器</title>
+    <meta name="description" content="关于 3D打印计算器：功能说明、更新日志、开发者社交平台与技术支持方式。">
+    <link rel="canonical" href="https://3d.iyuanyue.com/about.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="3D打印计算器">
+    <meta property="og:title" content="关于 · 3D打印计算器">
+    <meta property="og:description" content="功能说明、更新日志、开发者社交平台与技术支持方式。">
+    <meta property="og:url" content="https://3d.iyuanyue.com/about.html">
+    <meta name="theme-color" content="#eef1f6">
+    <script>
+        /* 主题初始化：在样式表加载前决定深浅色，避免闪烁 */
+        (function () {
+            try {
+                var KEY = '3dpc-theme';
+                var q = new URLSearchParams(location.search).get('theme');
+                var m = (q === 'light' || q === 'dark') ? q : (localStorage.getItem(KEY) || 'auto');
+                var sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var dark = m === 'dark' || (m === 'auto' && sysDark);
+                var el = document.documentElement;
+                el.setAttribute('data-theme-mode', m);
+                el.setAttribute('data-theme', dark ? 'dark' : 'light');
+                var meta = document.querySelector('meta[name="theme-color"]');
+                if (meta) meta.setAttribute('content', dark ? '#070b10' : '#eef1f6');
+            } catch (e) { }
+        })();
+    </script>
+    <style>html{background:#eef1f6}html[data-theme="dark"]{background:#070b10}</style>
+    <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/about.css">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
     <script async src="https://019aabda-1de0-7eae-9460-7fbf4c8caa7a.spst2.com/ustat.js"></script>
-    <meta name="description" content="专业的3D打印成本计算器，通过输入打印机参数、耗材信息和时间，快速估算材料、电力和折旧成本，助您精准控制打印预算。">
 </head>
 <body>
     <div class="container">
-        <div class="desktop-layout">
-            <div class="desktop-main">
-                <div class="page-container">
-                    <div class="header">
-                        <span class="title">关于</span>
-                        <span class="subtitle">3D打印计算器</span>
+        <div class="page-container">
+            <header class="app-header">
+                <a class="brand" href="index.html">
+                    <span class="brand-mark" aria-hidden="true">3D</span>
+                    <div class="brand-text">
+                        <h1 class="brand-title">关于</h1>
+                        <p class="brand-sub">3D打印计算器 · <strong>v1.3.0</strong></p>
                     </div>
-                    <!-- 关于内容 -->
-                    <div class="about-content">
-                        <!-- 应用介绍 -->
-                        <div class="section-card">
-                            <div class="section-title">应用介绍</div>
-                            <div class="section-content">
-                                <span class="content-text">一款专业的3D打印成本计算工具，帮助您预估打印项目的各项成本。<br>其中拓竹p2s和pla、petg的预设是按照本人最新实际购买情况填入的。</span>
+                </a>
+                <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换主题">
+                    <span class="theme-icon icon-auto" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.2" /><path d="M12 3.8a8.2 8.2 0 0 1 0 16.4z" fill="currentColor" stroke="none" /></svg></span>
+                    <span class="theme-icon icon-light" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6" /></svg></span>
+                    <span class="theme-icon icon-dark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 13.2A8.6 8.6 0 1 1 10.8 3.5a6.7 6.7 0 0 0 9.7 9.7z" /></svg></span>
+                </button>
+            </header>
+            <div class="about-content">
+                <!-- 应用介绍 -->
+                <div class="section-card">
+                    <div class="section-title">应用介绍</div>
+                    <div class="section-content">
+                        <span class="content-text">一款专业的3D打印成本计算工具，帮助您预估打印项目的各项成本。
+其中拓竹p2s和pla、petg的预设是按照本人最新实际购买情况填入的。</span>
+                    </div>
+                </div>
+                <!-- 关注开发者 -->
+                <div class="section-card">
+                    <div class="section-title">关注开发者</div>
+                    <div class="social-content">
+                        <p class="social-text">欢迎关注我的其他平台，获取更多有趣的项目和更新：</p>
+                        <div class="social-links">
+                            <a href="https://space.bilibili.com/2313519" target="_blank" rel="noopener" class="social-link">
+                                <img src="images/bilibili.png" alt="" class="social-icon">
+                                <span class="social-name">B站</span>
+                            </a>
+                            <a href="https://weibo.com/yuanyue1997" target="_blank" rel="noopener" class="social-link">
+                                <img src="images/weibo.png" alt="" class="social-icon">
+                                <span class="social-name">微博</span>
+                            </a>
+                            <a href="https://www.douyin.com/user/MS4wLjABAAAA84xrPW46XnJ3JwAj6TdzeYT6BKnazLDtSecPaR926ng" target="_blank" rel="noopener" class="social-link">
+                                <img src="images/douyin.png" alt="" class="social-icon">
+                                <span class="social-name">抖音</span>
+                            </a>
+                            <a href="https://github.com/iyuanyue" target="_blank" rel="noopener" class="social-link">
+                                <img src="images/github.png" alt="" class="social-icon">
+                                <span class="social-name">GitHub</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 支持开发者 -->
+                <div class="section-card">
+                    <div class="section-title">支持开发者</div>
+                    <div class="donation-content">
+                        <p class="donation-text">如果这个工具对您有帮助，欢迎请我喝杯咖啡 ☕<br>您将出现在感谢列表中，可提供您想显示的名称。如不想出现在感谢列表，请备注。<br>您的支持是我持续改进的动力！</p>
+                        <div class="qrcode-container">
+                            <div class="qrcode-item">
+                                <img src="images/alipay-qr.jpeg" alt="支付宝收款码" class="qrcode-image">
+                                <span class="qrcode-label">支付宝</span>
+                            </div>
+                            <div class="qrcode-item">
+                                <img src="images/wechat-qr.jpeg" alt="微信收款码" class="qrcode-image">
+                                <span class="qrcode-label">微信</span>
                             </div>
                         </div>
-                        <!-- 关注开发者 -->
-                        <div class="section-card">
-                            <div class="section-title">关注开发者</div>
-                            <div class="social-content">
-                                <p class="social-text">欢迎关注我的其他平台，获取更多有趣的项目和更新：</p>
-                                <div class="social-links">
-                                    <a href="https://space.bilibili.com/2313519" target="_blank" class="social-link">
-                                        <img src="images/bilibili.png" alt="B站" class="social-icon">
-                                        <span class="social-name">B站</span>
-                                    </a>
-                                    <a href="https://weibo.com/yuanyue1997" target="_blank" class="social-link">
-                                        <img src="images/weibo.png" alt="微博" class="social-icon">
-                                        <span class="social-name">微博</span>
-                                    </a>
-                                    <a href="https://www.douyin.com/user/MS4wLjABAAAA84xrPW46XnJ3JwAj6TdzeYT6BKnazLDtSecPaR926ng" target="_blank" class="social-link">
-                                        <img src="images/douyin.png" alt="抖音" class="social-icon">
-                                        <span class="social-name">抖音</span>
-                                    </a>
-                                    <a href="https://github.com/iyuanyue" target="_blank" class="social-link">
-                                        <img src="images/github.png" alt="GitHub" class="social-icon">
-                                        <span class="social-name">GitHub</span>
-                                    </a>
-                                </div>
+                        <p class="donation-tip">感谢您的每一份支持！ ❤️</p>
+                    </div>
+                </div>
+                <!-- 主要功能 -->
+                <div class="section-card">
+                    <div class="section-title">主要功能</div>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <span class="feature-icon" aria-hidden="true">💰</span>
+                            <div class="feature-content">
+                                <span class="feature-title">预估成本计算</span>
+                                <span class="feature-desc">材料成本、电力成本、设备折旧精确计算</span>
                             </div>
                         </div>
-                        <!-- 支持开发者 -->
-                        <div class="section-card">
-                            <div class="section-title">支持开发者</div>
-                            <div class="donation-content">
-                                <p class="donation-text">如果这个工具对您有帮助，欢迎请我喝杯咖啡 ☕ <br>您将出现在感谢列表中，可提供您想显示的名称。如不想出现在感谢列表，请备注。<br>您的支持是我持续改进的动力！</p>
-                                <div class="qrcode-container">
-                                    <div class="qrcode-item">
-                                        <img src="images/alipay-qr.jpeg" alt="支付宝捐赠" class="qrcode-image">
-                                        <span class="qrcode-label">支付宝</span>
-                                    </div>
-                                    <div class="qrcode-item">
-                                        <img src="images/wechat-qr.jpeg" alt="微信捐赠" class="qrcode-image">
-                                        <span class="qrcode-label">微信</span>
-                                    </div>
-                                </div>
-                                <p class="donation-tip">感谢您的每一份支持！ ❤️</p>
+                        <div class="feature-item">
+                            <span class="feature-icon" aria-hidden="true">📊</span>
+                            <div class="feature-content">
+                                <span class="feature-title">历史记录</span>
+                                <span class="feature-desc">保存和管理所有计算记录</span>
                             </div>
                         </div>
-                        <!-- 主要功能 -->
-                        <div class="section-card">
-                            <div class="section-title">主要功能</div>
-                            <div class="feature-list">
-                                <div class="feature-item">
-                                    <span class="feature-icon">💰</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">预估成本计算</span>
-                                        <span class="feature-desc">材料成本、电力成本、设备折旧精确计算</span>
-                                    </div>
-                                </div>
-                                <div class="feature-item">
-                                    <span class="feature-icon">📊</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">历史记录</span>
-                                        <span class="feature-desc">保存和管理所有计算记录</span>
-                                    </div>
-                                </div>
-                                <div class="feature-item">
-                                    <span class="feature-icon">⚡</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">实时计算</span>
-                                        <span class="feature-desc">输入参数即时显示计算结果</span>
-                                    </div>
-                                </div>
-                                <div class="feature-item">
-                                    <span class="feature-icon">🎯</span>
-                                    <div class="feature-content">
-                                        <span class="feature-title">智能匹配</span>
-                                        <span class="feature-desc">打印机型号、耗材类型自动匹配参数</span>
-                                    </div>
-                                </div>
+                        <div class="feature-item">
+                            <span class="feature-icon" aria-hidden="true">⚡</span>
+                            <div class="feature-content">
+                                <span class="feature-title">实时计算</span>
+                                <span class="feature-desc">输入参数即时显示计算结果</span>
                             </div>
                         </div>
-                        <!-- 更新日志 -->
-                        <div class="section-card">
-                            <div class="section-title">更新日志</div>
-                            <div class="changelog-list">
-                                <!-- 1.2.5 -->
-                                <div class="version-item">
-                                    <div class="version-header">
-                                        <span class="version-number">v1.2.5</span>
-                                        <span class="version-date">2025-11-23</span>
-                                    </div>
-                                    <div class="version-changes">
-                                        <span class="change-item">📥 数据更新</span>
-                                        <span class="change-item">✅ 更新了一大波预设数据</span>
-                                        <span class="change-item">✅ 预设价格现在为顶配官方标价，如p2s价格为多色版价格</span>
-                                        <span class="change-item">✅ 功耗在bambu lab wiki中查找并取打印PLA/PETG的较高值</span>
-                                        <span class="change-item">✅ 拓竹A1 mini、A1、P1S、X1、H2S、H2D功率https://wiki.bambulab.com/zh/general/power-consumption</span>
-                                        <span class="change-item">✅ 拓竹P2S功率https://wiki.bambulab.com/zh/p2s/manual/p2s-faq</span>
-                                        <span class="change-item">✅ 拓竹H2C功率https://wiki.bambulab.com/zh/h2c/manual/h2c-faq</span>
-                                        <span class="change-item">✅ 修改了默认的耗材价格并增加了一些耗材。数据来源拓竹JD自营店。</span>
-                                        <span class="change-item">✅ 现在在主页可以显示当前版本了。</span>
-                                    </div>
-                                </div>
-                                <!-- 1.1.2 -->
-                                <div class="version-item">
-                                    <div class="version-header">
-                                        <span class="version-number">v1.2.4</span>
-                                        <span class="version-date">2025-11-22</span>
-                                    </div>
-                                    <div class="version-changes">
-                                        <span class="change-item">🎯 架构重构</span>
-                                        <span class="change-item">✅ 电脑端优化</span>
-                                        <span class="change-item">✅ 手机端优化</span>
-                                        <span class="change-item">✅ 增加了开发者的社媒和捐赠入口</span>
-                                        <span class="change-item">✅ 增加了感谢列表</span>
-                                        <span class="change-item">✅ 现在可以记住上次的使用参数了</span>
-                                        <span class="change-item">✅ 可自定义打印机及耗材型号</span>
-                                        <span class="change-item">✅ 增加了颜色选项</span>
-                                        <span class="change-item">✅ 修改非关键弹窗样式为自动隐藏</span>
-                                        <span class="change-item">✅ 修复了一些问题</span>
-                                        <span class="change-item">✅ 进行了一些技术改进</span>
-                                    </div>
-                                </div>
-                                <!-- 1.0.0 -->
-                                <div class="version-item">
-                                    <div class="version-header">
-                                        <span class="version-number">v1.0.0</span>
-                                        <span class="version-date">2025-11-17</span>
-                                    </div>
-                                    <div class="version-changes">
-                                        <span class="change-item">🎉 首次发布</span>
-                                        <span class="change-item">✅ 基础成本计算功能</span>
-                                        <span class="change-item">✅ 打印机型号预设</span>
-                                        <span class="change-item">✅ 耗材类型预设</span>
-                                        <span class="change-item">✅ 历史记录</span>
-                                    </div>
-                                </div>
+                        <div class="feature-item">
+                            <span class="feature-icon" aria-hidden="true">🎯</span>
+                            <div class="feature-content">
+                                <span class="feature-title">智能匹配</span>
+                                <span class="feature-desc">打印机型号、耗材类型自动匹配参数</span>
                             </div>
                         </div>
-                        <!-- 技术支持 -->
-                        <div class="section-card">
-                            <div class="section-title">技术支持</div>
-                            <div class="support-content">
-                                <span class="support-text">如果您在使用过程中遇到任何问题或有改进建议，请联系我们：<br>如果有需要添加的机型，也可以发送给我。最好带有参数，如<br>机器名称、价格、功率、预期寿命、耗材名称、价格。</span>
-                                <div class="contact-item email-item" id="emailItem">
-                                    <span class="contact-label">邮箱：</span>
-                                    <div class="email-container">
-                                        <span class="contact-value" id="emailValue">i@iyuanyue.com</span>
-                                        <span class="copy-hint" id="copyHint">点击复制</span>
-                                    </div>
-                                </div>
-                                <div class="contact-item">
-                                    <span class="contact-label">版本：</span>
-                                    <span class="contact-value">v1.2.5</span>
-                                </div>
+                        <div class="feature-item">
+                            <span class="feature-icon" aria-hidden="true">🌗</span>
+                            <div class="feature-content">
+                                <span class="feature-title">深浅色主题</span>
+                                <span class="feature-desc">跟随系统或手动切换，夜间更护眼</span>
                             </div>
                         </div>
-                        <!-- 感谢支持 -->
-                        <div class="section-card">
-                            <div class="section-title">感谢支持 💝</div>
-                            <div class="thanks-content">
-                                <p class="thanks-text">特别感谢以下用户的支持和鼓励：</p>
-                                <div class="thanks-table">
-                                    <div class="table-header">
-                                        <div class="table-cell">支持者</div>
-                                        <div class="table-cell">支持方式</div>
-                                        <div class="table-cell">感谢语</div>
-                                    </div>
-                                    <div class="table-row">
-                                        <div class="table-cell">
-                                            <span class="user-name">❤️女朋友</span>
-                                        </div>
-                                        <div class="table-cell">
-                                            <span class="support-type donation">拓竹p2sc一台</span>
-                                        </div>
-                                        <div class="table-cell">
-                                            <span class="thank-message">感谢小孙的支持，才有了这个计算器的诞生。</span>
-                                        </div>
-                                    </div>
-                                    <div class="table-row">
-                                        <div class="table-cell">
-                                            <span class="user-name">刘先生</span>
-                                        </div>
-                                        <div class="table-cell">
-                                            <span class="support-type donation">P2S HULA脚垫</span>
-                                        </div>
-                                        <div class="table-cell">
-                                            <span class="thank-message">感谢老哥的支持和鼓励。</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="thanks-tip">您的支持是我持续改进的动力！</p>
+                        <div class="feature-item">
+                            <span class="feature-icon" aria-hidden="true">💾</span>
+                            <div class="feature-content">
+                                <span class="feature-title">本地存储</span>
+                                <span class="feature-desc">数据只保存在浏览器，隐私更安全</span>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!-- 更新日志 -->
+                <div class="section-card">
+                    <div class="section-title">更新日志</div>
+                    <div class="changelog-list">
+                        <!-- 1.3.0 -->
+                        <div class="version-item">
+                            <div class="version-header">
+                                <span class="version-number">v1.3.0</span>
+                                <span class="version-date">2026-11-17</span>
+                            </div>
+                            <div class="version-changes">
+                                <span class="change-item">🎨 全新视觉改版：统一的配色、圆角与层次更清晰</span>
+                                <span class="change-item">🌗 新增深色 / 浅色主题，可跟随系统或手动切换</span>
+                                <span class="change-item">📐 重新设计的桌面双栏布局，结果与历史记录常驻可见</span>
+                                <span class="change-item">✨ 更细腻的动效、焦点样式与移动端安全区适配</span>
+                                <span class="change-item">🔗 站点迁移至新域名 3d.iyuanyue.com</span>
+                            </div>
+                        </div>
+                        <!-- 1.2.5 -->
+                        <div class="version-item">
+                            <div class="version-header">
+                                <span class="version-number">v1.2.5</span>
+                                <span class="version-date">2025-11-23</span>
+                            </div>
+                            <div class="version-changes">
+                                <span class="change-item">📥 数据更新</span>
+                                <span class="change-item">✅ 更新了一大波预设数据</span>
+                                <span class="change-item">✅ 预设价格现在为顶配官方标价，如p2s价格为多色版价格</span>
+                                <span class="change-item">✅ 功耗在bambu lab wiki中查找并取打印PLA/PETG的较高值</span>
+                                <span class="change-item">✅ 拓竹A1 mini、A1、P1S、X1、H2S、H2D功率 https://wiki.bambulab.com/zh/general/power-consumption</span>
+                                <span class="change-item">✅ 拓竹P2S功率 https://wiki.bambulab.com/zh/p2s/manual/p2s-faq</span>
+                                <span class="change-item">✅ 拓竹H2C功率 https://wiki.bambulab.com/zh/h2c/manual/h2c-faq</span>
+                                <span class="change-item">✅ 修改了默认的耗材价格并增加了一些耗材。数据来源拓竹JD自营店。</span>
+                                <span class="change-item">✅ 现在在主页可以显示当前版本了。</span>
+                            </div>
+                        </div>
+                        <!-- 1.2.4 -->
+                        <div class="version-item">
+                            <div class="version-header">
+                                <span class="version-number">v1.2.4</span>
+                                <span class="version-date">2025-11-22</span>
+                            </div>
+                            <div class="version-changes">
+                                <span class="change-item">🎯 架构重构</span>
+                                <span class="change-item">✅ 电脑端优化</span>
+                                <span class="change-item">✅ 手机端优化</span>
+                                <span class="change-item">✅ 增加了开发者的社媒和捐赠入口</span>
+                                <span class="change-item">✅ 增加了感谢列表</span>
+                                <span class="change-item">✅ 现在可以记住上次的使用参数了</span>
+                                <span class="change-item">✅ 可自定义打印机及耗材型号</span>
+                                <span class="change-item">✅ 增加了颜色选项</span>
+                                <span class="change-item">✅ 修改非关键弹窗样式为自动隐藏</span>
+                                <span class="change-item">✅ 修复了一些问题</span>
+                                <span class="change-item">✅ 进行了一些技术改进</span>
+                            </div>
+                        </div>
+                        <!-- 1.0.0 -->
+                        <div class="version-item">
+                            <div class="version-header">
+                                <span class="version-number">v1.0.0</span>
+                                <span class="version-date">2025-11-17</span>
+                            </div>
+                            <div class="version-changes">
+                                <span class="change-item">🎉 首次发布</span>
+                                <span class="change-item">✅ 基础成本计算功能</span>
+                                <span class="change-item">✅ 打印机型号预设</span>
+                                <span class="change-item">✅ 耗材类型预设</span>
+                                <span class="change-item">✅ 历史记录</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 技术支持 -->
+                <div class="section-card">
+                    <div class="section-title">技术支持</div>
+                    <div class="support-content">
+                        <span class="support-text">如果您在使用过程中遇到任何问题或有改进建议，请联系我们：
+如果有需要添加的机型，也可以发送给我。最好带有参数，如
+机器名称、价格、功率、预期寿命、耗材名称、价格。</span>
+                        <div class="contact-item email-item" id="emailItem">
+                            <span class="contact-label">邮箱</span>
+                            <div class="email-container">
+                                <span class="contact-value" id="emailValue">i@iyuanyue.com</span>
+                                <span class="copy-hint" id="copyHint">点击复制</span>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-label">版本</span>
+                            <span class="contact-value">v1.3.0</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-label">网址</span>
+                            <a class="contact-value" href="https://3d.iyuanyue.com/" target="_blank" rel="noopener">3d.iyuanyue.com</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 感谢支持 -->
+                <div class="section-card">
+                    <div class="section-title">感谢支持 💝</div>
+                    <div class="thanks-content">
+                        <p class="thanks-text">特别感谢以下用户的支持和鼓励：</p>
+                        <div class="thanks-table">
+                            <div class="table-header">
+                                <div class="table-cell">支持者</div>
+                                <div class="table-cell">支持方式</div>
+                                <div class="table-cell">感谢语</div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell"><span class="user-name">❤️女朋友</span></div>
+                                <div class="table-cell"><span class="support-type donation">拓竹p2sc一台</span></div>
+                                <div class="table-cell"><span class="thank-message">感谢小孙的支持，才有了这个计算器的诞生。</span></div>
+                            </div>
+                            <div class="table-row">
+                                <div class="table-cell"><span class="user-name">刘先生</span></div>
+                                <div class="table-cell"><span class="support-type donation">P2S HULA脚垫</span></div>
+                                <div class="table-cell"><span class="thank-message">感谢老哥的支持和鼓励。</span></div>
+                            </div>
+                        </div>
+                        <p class="thanks-tip">您的支持是我持续改进的动力！</p>
+                    </div>
+                </div>
             </div>
         </div>
-</div>
-        <div class="tab-bar">
+        <nav class="tab-bar">
             <a href="index.html" class="tab-item">
-                <span class="tab-icon calc-icon"></span>
-                <span class="tab-text">成本计算</span>
+                <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.2" y="2.6" width="15.6" height="18.8" rx="3.4" /><path d="M8 7.6h8" /><path d="M8.4 12.2h.01M12 12.2h.01M15.6 12.2h.01M8.4 16.4h.01M12 16.4h.01M15.6 16.4h.01" /></svg></span>
+                <span class="tab-text">计算器</span>
             </a>
             <a href="history.html" class="tab-item">
-                <span class="tab-icon history-icon"></span>
+                <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6" /><path d="M12 7.4V12l3.1 2" /></svg></span>
                 <span class="tab-text">历史记录</span>
             </a>
-        </div>
+        </nav>
     </div>
+    <script src="js/theme.js"></script>
     <script src="js/about.js"></script>
 </body>
 </html>
-
