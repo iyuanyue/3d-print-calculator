@@ -232,6 +232,25 @@
             var expanded = item.classList.toggle('expanded');
             head.setAttribute('aria-expanded', expanded ? 'true' : 'false');
         });
+
+        // 选好类型后自动收起，保持界面紧凑；选「其他」则保持展开以便输入名称
+        container.addEventListener('change', function (e) {
+            var sel = e.target.closest ? e.target.closest('.filament-select') : null;
+            if (!sel) return;
+            var item = sel.closest('.filament-item');
+            if (!item) return;
+            var head = $('.filament-head', item);
+            var collapse = function () {
+                item.classList.remove('expanded');
+                if (head) head.setAttribute('aria-expanded', 'false');
+            };
+            if (sel.value === 'other') {
+                item.classList.add('expanded');
+                if (head) head.setAttribute('aria-expanded', 'true');
+            } else if (sel.value !== '-1') {
+                setTimeout(collapse, 300);
+            }
+        });
     }
 
     /* ---------------------------------------------------------------------
@@ -451,7 +470,20 @@
         // 耗材项增删 / 重建
         var list = $('#filamentItemsContainer');
         if (list) {
-            new MutationObserver(function () { syncSoon(); }).observe(list, { childList: true });
+            var lastCount = list.querySelectorAll('.filament-item').length;
+            new MutationObserver(function () {
+                var count = list.querySelectorAll('.filament-item').length;
+                if (count > lastCount) {
+                    // 新增了一行：滚到可见位置并展开（createFilamentItem 已处理展开）
+                    var items = list.querySelectorAll('.filament-item');
+                    var added = items[items.length - 1];
+                    if (added && added.scrollIntoView) {
+                        setTimeout(function () { added.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }, 60);
+                    }
+                }
+                lastCount = count;
+                syncSoon();
+            }).observe(list, { childList: true });
         }
 
         syncAll();
