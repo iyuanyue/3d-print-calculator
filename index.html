@@ -39,131 +39,189 @@
 </head>
 <body>
     <div class="container">
-        <div class="desktop-layout">
-            <div class="desktop-main">
-                <div class="page-container">
-                    <header class="app-header">
-                        <div class="brand">
-                            <span class="brand-mark" aria-hidden="true">3D</span>
-                            <div class="brand-text">
-                                <h1 class="brand-title">3D打印计算器</h1>
-                                <p class="brand-sub">成本预估 · <strong>v1.3.0</strong></p>
-                            </div>
+        <div class="calc-shell">
+            <!-- ================= 左栏：输入 ================= -->
+            <div class="col-left">
+                <header class="app-header">
+                    <div class="brand">
+                        <span class="brand-mark" aria-hidden="true">3D</span>
+                        <div class="brand-text">
+                            <h1 class="brand-title">3D打印计算器</h1>
+                            <p class="brand-sub">成本预估 · <strong>v1.4.0</strong></p>
                         </div>
-                        <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换主题">
-                            <span class="theme-icon icon-auto" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.2" /><path d="M12 3.8a8.2 8.2 0 0 1 0 16.4z" fill="currentColor" stroke="none" /></svg></span>
-                            <span class="theme-icon icon-light" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6" /></svg></span>
-                            <span class="theme-icon icon-dark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 13.2A8.6 8.6 0 1 1 10.8 3.5a6.7 6.7 0 0 0 9.7 9.7z" /></svg></span>
-                        </button>
-                    </header>
-                    <div class="main-scroll">
-                        <div class="card compact-form">
-                            <div class="settings-section">
-                                <h2 class="section-title">打印机设置</h2>
-                                <div class="form-item-row">
-                                    <div class="form-item select-container">
-                                        <label class="label" for="printerSelect">打印机型号</label>
-                                        <select class="select" id="printerSelect" autocomplete="off">
-                                            <option value="-1">请选择打印机型号</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-item input-container printer-input-container">
-                                        <label class="label" for="customPrinterName">自定义型号</label>
-                                        <input type="text" id="customPrinterName" placeholder="输入型号" class="input">
-                                    </div>
+                    </div>
+                    <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换主题">
+                        <span class="theme-icon icon-auto" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.2" /><path d="M12 3.8a8.2 8.2 0 0 1 0 16.4z" fill="currentColor" stroke="none" /></svg></span>
+                        <span class="theme-icon icon-light" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6" /></svg></span>
+                        <span class="theme-icon icon-dark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 13.2A8.6 8.6 0 1 1 10.8 3.5a6.7 6.7 0 0 0 9.7 9.7z" /></svg></span>
+                    </button>
+                </header>
+
+                <!-- 常驻合计条 -->
+                <section class="totbar" id="totbar" aria-live="polite">
+                    <div class="tot-main">
+                        <span class="tot-label">本次打印合计</span>
+                        <span class="tot-value">¥<span id="totbarValue">0.00</span></span>
+                    </div>
+                    <div class="tot-meta">
+                        <span class="tot-chip" id="totbarHours">0.00 小时</span>
+                        <span class="tot-mix" id="totbarMix">材料 — · 电 — · 折旧 —</span>
+                    </div>
+                </section>
+
+                <div class="main-scroll">
+                    <!-- 设备 -->
+                    <section class="panel" id="devicePanel">
+                        <div class="panel-head">
+                            <h2 class="panel-title">设备</h2>
+                            <button class="link-btn" id="deviceToggle" type="button" aria-expanded="false" aria-controls="deviceBody">更改</button>
+                        </div>
+                        <div class="device-summary" id="deviceSummary">
+                            <span class="tag">选择机型后自动带出参数</span>
+                        </div>
+                        <div class="device-body" id="deviceBody" hidden>
+                            <div class="form-item-row">
+                                <div class="form-item select-container">
+                                    <label class="label" for="printerSelect">打印机型号</label>
+                                    <select class="select" id="printerSelect" autocomplete="off">
+                                        <option value="-1">请选择打印机型号</option>
+                                    </select>
                                 </div>
-                                <div class="form-row">
-                                    <div class="form-item">
-                                        <label class="label" for="printerPower">打印机功率 (W)</label>
-                                        <input type="number" id="printerPower" placeholder="输入功率" class="input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
-                                    </div>
-                                    <div class="form-item">
-                                        <label class="label" for="electricityRate">电价 (¥/度)</label>
-                                        <input type="number" id="electricityRate" placeholder="输入电价" class="input" value="0.65" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-item">
-                                        <label class="label" for="printerCost">打印机价值 (¥)</label>
-                                        <input type="number" id="printerCost" placeholder="输入金额" class="input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
-                                    </div>
-                                    <div class="form-item">
-                                        <label class="label" for="printerLifespan">预计寿命 (小时)</label>
-                                        <input type="number" id="printerLifespan" placeholder="输入寿命" class="input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
-                                    </div>
+                                <div class="form-item input-container printer-input-container">
+                                    <label class="label" for="customPrinterName">自定义型号</label>
+                                    <input type="text" id="customPrinterName" placeholder="输入型号" class="input">
                                 </div>
                             </div>
-                            <div class="settings-section">
-                                <h2 class="section-title">耗材设置</h2>
-                                <div id="filamentItemsContainer"></div>
-                                <button class="add-filament-btn" id="addFilamentBtn">+ 添加耗材</button>
-                            </div>
-                            <div class="settings-section">
-                                <h2 class="section-title">打印参数</h2>
+                            <div class="form-row">
                                 <div class="form-item">
-                                    <label class="label" for="printHours">打印时间(例0:90/1:30)</label>
-                                    <div class="time-group">
-                                        <div class="time-item">
-                                            <input type="number" id="printHours" placeholder="0" class="time-input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
-                                            <span class="time-label">小时</span>
-                                        </div>
-                                        <span class="time-separator">:</span>
-                                        <div class="time-item">
-                                            <input type="number" id="printMinutes" placeholder="0" class="time-input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
-                                            <span class="time-label">分钟(可超60)</span>
-                                        </div>
-                                    </div>
+                                    <label class="label" for="printerPower">打印机功率 (W)</label>
+                                    <input type="number" id="printerPower" placeholder="输入功率" class="input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
+                                </div>
+                                <div class="form-item">
+                                    <label class="label" for="electricityRate">电价 (¥/度)</label>
+                                    <input type="number" id="electricityRate" placeholder="输入电价" class="input" value="0.65" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-item">
+                                    <label class="label" for="printerCost">打印机价值 (¥)</label>
+                                    <input type="number" id="printerCost" placeholder="输入金额" class="input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
+                                </div>
+                                <div class="form-item">
+                                    <label class="label" for="printerLifespan">预计寿命 (小时)</label>
+                                    <input type="number" id="printerLifespan" placeholder="输入寿命" class="input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
                                 </div>
                             </div>
                         </div>
+                    </section>
+
+                    <!-- 耗材 -->
+                    <section class="panel" id="filamentPanel">
+                        <div class="panel-head">
+                            <h2 class="panel-title">耗材</h2>
+                            <span class="panel-sub" id="filamentSummaryText">未添加</span>
+                        </div>
+                        <div class="filament-rows" id="filamentItemsContainer"></div>
+                        <button class="add-row" id="addFilamentBtn" type="button">
+                            <span aria-hidden="true">＋</span> 添加耗材
+                        </button>
+                    </section>
+
+                    <!-- 打印时间 -->
+                    <section class="panel" id="timePanel">
+                        <div class="panel-head">
+                            <h2 class="panel-title">打印时间</h2>
+                            <span class="panel-sub">± 30 分钟，或直接输入</span>
+                        </div>
+                        <div class="stepper">
+                            <button class="step-btn" type="button" data-step="-30" aria-label="减少 30 分钟">−</button>
+                            <div class="step-value" aria-live="polite">
+                                <span id="timeHoursView">0</span><small>小时</small>
+                                <span id="timeMinutesView">0</span><small>分</small>
+                            </div>
+                            <button class="step-btn" type="button" data-step="30" aria-label="增加 30 分钟">＋</button>
+                        </div>
+                        <div class="chips" role="group" aria-label="快捷时长">
+                            <button class="chip" type="button" data-hours="1">1h</button>
+                            <button class="chip" type="button" data-hours="2">2h</button>
+                            <button class="chip" type="button" data-hours="4">4h</button>
+                            <button class="chip" type="button" data-hours="8">8h</button>
+                        </div>
+                        <div class="time-exact">
+                            <label class="visually-hidden" for="printHours">打印小时</label>
+                            <input type="number" id="printHours" placeholder="0" class="time-input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
+                            <span class="time-unit">小时</span>
+                            <label class="visually-hidden" for="printMinutes">打印分钟</label>
+                            <input type="number" id="printMinutes" placeholder="0" class="time-input" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off">
+                            <span class="time-unit">分（可超 60）</span>
+                        </div>
+                    </section>
+
+                    <!-- 重置后的撤销条 -->
+                    <div class="undo-bar" id="undoBar" hidden>
+                        <span id="undoText">已重置为默认值（保留机型与电价记忆）</span>
+                        <button class="undo-btn" id="undoBtn" type="button">撤销</button>
                     </div>
-                    <div class="result-section">
-                        <div class="result-card">
-                            <div class="result-header">
-                                <span class="result-title">成本分析</span>
-                                <span class="result-subtitle">总计 <span id="totalHours">0.00</span> 小时</span>
-                            </div>
-                            <div class="cost-list">
-                                <div class="cost-item">
-                                    <span class="cost-name">材料成本</span>
-                                    <span class="cost-value">¥<span id="materialCost">0.00</span></span>
-                                </div>
-                                <div class="cost-item">
-                                    <span class="cost-name">电力成本</span>
-                                    <span class="cost-value">¥<span id="electricityCost">0.00</span></span>
-                                </div>
-                                <div class="cost-item">
-                                    <span class="cost-name">设备折旧</span>
-                                    <span class="cost-value">¥<span id="depreciationCost">0.00</span></span>
-                                </div>
-                            </div>
-                            <div class="total-cost">
-                                <span class="total-label">打印总成本</span>
-                                <span class="total-value">¥<span id="totalCost">0.00</span></span>
-                            </div>
-                        </div>
-                        <div class="action-buttons">
-                            <button class="btn reset" id="resetBtn">重新计算</button>
-                            <button class="btn save" id="saveBtn">保存记录</button>
-                        </div>
-                    </div>
+                </div>
+
+                <!-- 底部操作条 -->
+                <div class="dock">
+                    <button class="btn ghost" id="resetBtn" type="button">重置</button>
+                    <button class="btn save" id="saveBtn" type="button">保存记录</button>
                 </div>
             </div>
-            <aside class="desktop-sidebar">
-                <div class="history-sidebar">
-                    <div class="sidebar-header">
-                        <span class="sidebar-title">历史记录</span>
-                        <span class="sidebar-subtitle">共 <span id="desktopRecordCount">0</span> 条</span>
+
+            <!-- ================= 右栏：结果与记录 ================= -->
+            <div class="col-right">
+                <section class="panel result-panel">
+                    <div class="panel-head">
+                        <h2 class="panel-title">成本构成</h2>
+                        <span class="panel-sub" id="resultHint">实时计算</span>
+                    </div>
+                    <div class="detail-list">
+                        <div class="detail-row">
+                            <span>材料成本</span>
+                            <b>¥<span id="materialCost">0.00</span></b>
+                        </div>
+                        <div class="detail-row">
+                            <span>电力成本</span>
+                            <b>¥<span id="electricityCost">0.00</span></b>
+                        </div>
+                        <div class="detail-row">
+                            <span>设备折旧</span>
+                            <b>¥<span id="depreciationCost">0.00</span></b>
+                        </div>
+                        <div class="detail-row detail-total">
+                            <span>打印总成本</span>
+                            <b>¥<span id="totalCost">0.00</span></b>
+                        </div>
+                        <div class="detail-row detail-muted">
+                            <span>总耗时</span>
+                            <b><span id="totalHours">0.00</span> 小时</b>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel recent-panel">
+                    <div class="panel-head">
+                        <h2 class="panel-title">最近记录</h2>
+                        <span class="panel-sub">共 <span id="desktopRecordCount">0</span> 条</span>
                     </div>
                     <div class="history-list" id="desktopHistoryList">
+                        <div class="empty-state">
+                            <span class="empty-icon" aria-hidden="true">📝</span>
+                            <span class="empty-text">暂无记录</span>
+                            <span class="empty-tip">保存记录后会显示在这里</span>
+                        </div>
                     </div>
-                    <div class="sidebar-actions">
-                        <button class="btn clear" id="desktopClearBtn">清空全部</button>
-                        <button class="btn about" id="desktopAboutBtn">关于</button>
+                    <div class="panel-foot">
+                        <button class="btn clear" id="desktopClearBtn" type="button">清空全部</button>
+                        <button class="btn about" id="desktopAboutBtn" type="button">关于</button>
                     </div>
-                </div>
-            </aside>
+                </section>
+            </div>
         </div>
+
         <nav class="tab-bar">
             <a href="index.html" class="tab-item active">
                 <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.2" y="2.6" width="15.6" height="18.8" rx="3.4" /><path d="M8 7.6h8" /><path d="M8.4 12.2h.01M12 12.2h.01M15.6 12.2h.01M8.4 16.4h.01M12 16.4h.01M15.6 16.4h.01" /></svg></span>
@@ -175,6 +233,7 @@
             </a>
         </nav>
     </div>
+
     <div class="modal" id="remarkModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -191,40 +250,13 @@
             </div>
         </div>
     </div>
+
     <script src="js/theme.js"></script>
     <script src="js/config.js"></script>
     <script src="js/calculator.js"></script>
     <script src="js/share.js"></script>
     <script src="js/index.js"></script>
-    <script>
-        // 防止移动端输入框聚焦时页面缩放
-        document.addEventListener('DOMContentLoaded', function () {
-            let scrollPosition = 0;
-            document.querySelectorAll('input, textarea, select').forEach(function (input) {
-                input.addEventListener('focus', function () {
-                    scrollPosition = window.scrollY;
-                });
-                input.addEventListener('blur', function () {
-                    setTimeout(function () {
-                        window.scrollTo(0, scrollPosition);
-                        window.dispatchEvent(new Event('resize'));
-                    }, 100);
-                });
-            });
-            document.addEventListener('dblclick', function (e) {
-                e.preventDefault();
-            }, { passive: false });
-            document.addEventListener('gesturestart', function (e) {
-                e.preventDefault();
-            });
-            document.addEventListener('gesturechange', function (e) {
-                e.preventDefault();
-            });
-            document.addEventListener('gestureend', function (e) {
-                e.preventDefault();
-            });
-        });
-    </script>
+    <script src="js/ui.js"></script>
 </body>
 
 </html>

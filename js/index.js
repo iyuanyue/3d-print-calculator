@@ -546,18 +546,53 @@
                 filamentItem.setAttribute('data-index', index);
                 // 修复：确保颜色选择器正确显示/隐藏（使用 DOM 构建）
                 const colorEnabled = filament.colorEnabled || false;
-                // header: 标题 + 启用颜色复选框 + 可选删除按钮
-                const headerDiv = document.createElement('div');
-                headerDiv.className = 'filament-item-header';
-                const titleSpan = document.createElement('span');
-                titleSpan.className = 'filament-item-title';
-                titleSpan.textContent = `耗材 #${index + 1}`;
-                headerDiv.appendChild(titleSpan);
-                // 把颜色启用复选框放在标题后面（更靠前）
-                const colorControlsHeader = document.createElement('div');
-                colorControlsHeader.style.display = 'flex';
-                colorControlsHeader.style.alignItems = 'center';
-                colorControlsHeader.style.gap = '8px';
+
+                /* ---------- 折叠摘要行（点击展开） ---------- */
+                const head = document.createElement('button');
+                head.type = 'button';
+                head.className = 'filament-head';
+                head.setAttribute('aria-expanded', 'false');
+                const dotEl = document.createElement('span');
+                dotEl.className = 'color-swatch filament-dot';
+                dotEl.dataset.color = filament.color || '';
+                dotEl.setAttribute('aria-hidden', 'true');
+                const infoEl = document.createElement('span');
+                infoEl.className = 'filament-info';
+                const nameEl = document.createElement('span');
+                nameEl.className = 'filament-name';
+                nameEl.textContent = `耗材 #${index + 1}`;
+                const subEl = document.createElement('span');
+                subEl.className = 'filament-sub';
+                subEl.textContent = '选择类型并填写重量';
+                infoEl.appendChild(nameEl);
+                infoEl.appendChild(subEl);
+                const costEl = document.createElement('span');
+                costEl.className = 'filament-cost is-empty';
+                costEl.textContent = '—';
+                const chevron = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                chevron.setAttribute('class', 'filament-chevron');
+                chevron.setAttribute('viewBox', '0 0 24 24');
+                chevron.setAttribute('fill', 'none');
+                chevron.setAttribute('stroke', 'currentColor');
+                chevron.setAttribute('stroke-width', '2');
+                chevron.setAttribute('stroke-linecap', 'round');
+                chevron.setAttribute('aria-hidden', 'true');
+                const chevronPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                chevronPath.setAttribute('d', 'M6 9l6 6 6-6');
+                chevron.appendChild(chevronPath);
+                head.appendChild(dotEl);
+                head.appendChild(infoEl);
+                head.appendChild(costEl);
+                head.appendChild(chevron);
+                filamentItem.appendChild(head);
+
+                /* ---------- 展开区 ---------- */
+                const bodyEl = document.createElement('div');
+                bodyEl.className = 'filament-body';
+
+                // 启用颜色开关 + 删除按钮
+                const controlsRow = document.createElement('div');
+                controlsRow.className = 'filament-controls-row';
                 const colorEnableHeader = document.createElement('input');
                 colorEnableHeader.type = 'checkbox';
                 colorEnableHeader.id = `filamentColorEnable-${index}`;
@@ -569,18 +604,17 @@
                 colorEnableHeaderLabel.className = 'label label-no-margin';
                 colorEnableHeaderLabel.setAttribute('for', `filamentColorEnable-${index}`);
                 colorEnableHeaderLabel.textContent = '启用颜色';
-                colorControlsHeader.appendChild(colorEnableHeader);
-                colorControlsHeader.appendChild(colorEnableHeaderLabel);
-                headerDiv.appendChild(colorControlsHeader);
+                controlsRow.appendChild(colorEnableHeader);
+                controlsRow.appendChild(colorEnableHeaderLabel);
                 if (index > 0) {
                     const removeBtn = document.createElement('button');
                     removeBtn.type = 'button';
                     removeBtn.className = 'remove-filament-btn';
                     removeBtn.dataset.index = index;
                     removeBtn.textContent = '删除';
-                    headerDiv.appendChild(removeBtn);
+                    controlsRow.appendChild(removeBtn);
                 }
-                filamentItem.appendChild(headerDiv);
+                bodyEl.appendChild(controlsRow);
                 // first row: select + custom name
                 const row1 = document.createElement('div'); row1.className = 'form-item-row';
                 const selectContainer = document.createElement('div'); selectContainer.className = 'form-item select-container';
@@ -626,7 +660,7 @@
                 if (!colorEnabled) colorContainer.style.display = 'none';
                 row1.appendChild(colorContainer);
                 row1.appendChild(inputContainer);
-                filamentItem.appendChild(row1);
+                bodyEl.appendChild(row1);
                 // second row: price + weight
                 const row2 = document.createElement('div'); row2.className = 'form-row';
                 const priceWrap = document.createElement('div'); priceWrap.className = 'form-item';
@@ -644,8 +678,13 @@
                 weightInput.setAttribute('autocomplete', 'off');
                 weightWrap.appendChild(weightLabel); weightWrap.appendChild(weightInput);
                 row2.appendChild(priceWrap); row2.appendChild(weightWrap);
-                filamentItem.appendChild(row2);
-                // 颜色控制已放在标题和第一行（启用复选框在标题，色盘在选择后），无需在此创建额外行。
+                bodyEl.appendChild(row2);
+                filamentItem.appendChild(bodyEl);
+                // 新建的空耗材默认展开，方便直接选类型；已有数据的保持折叠
+                if ((filament.index === -1 || filament.index === undefined) && !filament.weight) {
+                    filamentItem.classList.add('expanded');
+                    head.setAttribute('aria-expanded', 'true');
+                }
                 container.appendChild(filamentItem);
                 this.initializeFilamentSelect(index).then(() => {
                     // 设置选择框的值
