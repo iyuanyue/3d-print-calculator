@@ -484,49 +484,28 @@
     }
 
     /* ---------------------------------------------------------------------
-       导入 / 导出
+       对外 API（供「数据与备份」使用）
        --------------------------------------------------------------------- */
-    function exportConfig() {
-        var data = {
-            app: EXPORT_APP,
-            kind: EXPORT_KIND,
-            version: 1,
-            exportedAt: new Date().toISOString(),
-            filaments: {
-                presets: presetPrices,
-                custom: customItems
-            }
+    function getData() {
+        return {
+            presets: Object.assign({}, presetPrices),
+            custom: customItems.map(function (c) { return Object.assign({}, c); })
         };
-        var stamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-        var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = 'filament-config-' + stamp + '.json';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
-        toast('配置已导出', 'success');
     }
 
-    function validateImport(raw) {
+    function parseData(raw) {
         if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
-            return { error: '文件内容不是有效的配置对象' };
-        }
-        var source = raw.filaments && typeof raw.filaments === 'object' ? raw.filaments : raw;
-        if (!source || typeof source !== 'object') {
-            return { error: '缺少 filaments 字段' };
+            return { error: 'filaments 字段格式不正确' };
         }
 
         var presets = {};
-        var rawPresets = source.presets;
+        var rawPresets = raw.presets;
         if (rawPresets !== undefined) {
             if (!rawPresets || typeof rawPresets !== 'object' || Array.isArray(rawPresets)) {
-                return { error: 'presets 字段格式不正确' };
+                return { error: 'filaments.presets 字段格式不正确' };
             }
             var keys = Object.keys(rawPresets);
-            if (keys.length > 50) return { error: 'presets 条目过多' };
+            if (keys.length > 50) return { error: '预设价格条目过多' };
             for (var i = 0; i < keys.length; i++) {
                 var key = keys[i];
                 if (!byId(key)) continue;
@@ -537,11 +516,11 @@
         }
 
         var custom = [];
-        if (source.custom !== undefined) {
-            if (!Array.isArray(source.custom)) return { error: 'custom 字段必须是数组' };
-            if (source.custom.length > MAX_CUSTOM) return { error: '自定义耗材超过 ' + MAX_CUSTOM + ' 项' };
-            for (var k = 0; k < source.custom.length; k++) {
-                var item = source.custom[k];
+        if (raw.custom !== undefined) {
+            if (!Array.isArray(raw.custom)) return { error: 'filaments.custom 必须是数组' };
+            if (raw.custom.length > MAX_CUSTOM) return { error: '自定义耗材超过 ' + MAX_CUSTOM + ' 项' };
+            for (var k = 0; k < raw.custom.length; k++) {
+                var item = raw.custom[k];
                 if (!item || typeof item !== 'object') return { error: '第 ' + (k + 1) + ' 项自定义耗材格式无效' };
                 var name = String(item.name === undefined ? '' : item.name).trim();
                 if (!name) return { error: '第 ' + (k + 1) + ' 项自定义耗材缺少名称' };
@@ -560,23 +539,13 @@
         return { presets: presets, custom: custom };
     }
 
-    function applyImport(text) {
-        var parsed;
-        try {
-            parsed = JSON.parse(text);
-        } catch (e) {
-            toast('无法解析：不是合法的 JSON 文件', 'error');
-            return;
-        }
-        var result = validateImport(parsed);
-        if (result.error) {
-            toast('导入失败：' + result.error, 'error');
-            return;
-        }
+    function setData(data) {
+        var parsed = parseData(data);
+        if (parsed.error) return parsed;
 
         var oldByName = priceMapByName();
-        presetPrices = result.presets;
-        customItems = result.custom;
+        presetPrices = parsed.presets;
+        customItems = parsed.custom;
         persist();
         applyToConfig();
         refreshSelects();
@@ -588,9 +557,7 @@
             if (typeof window.indexPage.calculateCost === 'function') window.indexPage.calculateCost();
             if (typeof window.indexPage.saveCurrentSettings === 'function') window.indexPage.saveCurrentSettings();
         }
-
-        openModal(); // 保持在弹窗里，便于核对结果
-        toast('已导入：' + Object.keys(presetPrices).length + ' 项改价 / ' + customItems.length + ' 项自定义', 'success');
+        return { ok: true, presets: Object.keys(presetPrices).length, custom: customItems.length };
     }
 
     /* ---------------------------------------------------------------------
@@ -658,24 +625,21 @@
                 if (!btn) return;
                 var row = btn.closest('.custom-row');
                 if (row) row.remove();
-                if (!customList.querySelector('.custom-row')) buildCustomRows();
+                if (!customList.querySelector('.custom-row')) {
+                    // 只补空态提示，不要从内存模型重建（否则被删的行会“复活”）
+                    var empty = document.createElement('p');
+                    empty.className = 'custom-empty';
+                    empty.textContent = '还没有自定义耗材。添加后会出现在「耗材类型」下拉里，并保存在本地。';
+                    customList.appendChild(empty);
+                }
             });
         }
 
-        var exportBtn = $('#exportBtn');
-        if (exportBtn) exportBtn.addEventListener('click', exportConfig);
-
-        var importBtn = $('#importBtn');
-        var importFile = $('#importFile');
-        if (importBtn && importFile) {
-            importBtn.addEventListener('click', function () { importFile.value = ''; importFile.click(); });
-            importFile.addEventListener('change', function () {
-                var file = importFile.files && importFile.files[0];
-                if (!file) return;
-                var reader = new FileReader();
-                reader.onload = function () { applyImport(String(reader.result || '')); };
-                reader.onerror = function () { toast('读取文件失败', 'error'); };
-                reader.readAsText(file);
+        var backupBtn = $('#dataBackupBtn');
+        if (backupBtn) {
+            backupBtn.addEventListener('click', function () {
+                closeModal();
+                if (window.AppBackup && typeof window.AppBackup.open === 'function') window.AppBackup.open();
             });
         }
 
@@ -696,11 +660,13 @@
     applyToConfig();
 
     window.FilamentCatalog = {
-        getPresets: function () { return Object.assign({}, presetPrices); },
-        getCustom: function () { return customItems.map(function (c) { return Object.assign({}, c); }); },
+        getData: getData,
+        parseData: parseData,
+        setData: setData,
+        refreshOptions: refreshSelects,
+        rebuildModal: rebuildModal,
         defaults: PRESET_DEFAULTS.map(function (p) { return Object.assign({}, p); }),
-        exportConfig: exportConfig,
-        applyImport: applyImport
+        count: function () { return customItems.length; }
     };
 
     if (document.readyState === 'loading') {

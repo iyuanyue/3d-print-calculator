@@ -47,14 +47,23 @@
                         <span class="brand-mark" aria-hidden="true">3D</span>
                         <div class="brand-text">
                             <h1 class="brand-title">3D打印计算器</h1>
-                            <p class="brand-sub">成本预估 · <strong>v1.5.0</strong></p>
+                            <p class="brand-sub">成本预估 · <strong>v1.6.0</strong></p>
                         </div>
                     </div>
-                    <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换主题">
-                        <span class="theme-icon icon-auto" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.2" /><path d="M12 3.8a8.2 8.2 0 0 1 0 16.4z" fill="currentColor" stroke="none" /></svg></span>
-                        <span class="theme-icon icon-light" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6" /></svg></span>
-                        <span class="theme-icon icon-dark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 13.2A8.6 8.6 0 1 1 10.8 3.5a6.7 6.7 0 0 0 9.7 9.7z" /></svg></span>
-                    </button>
+                    <div class="header-actions">
+                        <button class="icon-btn" id="backupBtn" type="button" aria-label="数据与备份" title="数据与备份">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <ellipse cx="12" cy="5.5" rx="7.5" ry="3" />
+                                <path d="M4.5 5.5v6c0 1.66 3.36 3 7.5 3s7.5-1.34 7.5-3v-6" />
+                                <path d="M4.5 11.5v6c0 1.66 3.36 3 7.5 3s7.5-1.34 7.5-3v-6" />
+                            </svg>
+                        </button>
+                        <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换主题">
+                            <span class="theme-icon icon-auto" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.2" /><path d="M12 3.8a8.2 8.2 0 0 1 0 16.4z" fill="currentColor" stroke="none" /></svg></span>
+                            <span class="theme-icon icon-light" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6" /></svg></span>
+                            <span class="theme-icon icon-dark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 13.2A8.6 8.6 0 1 1 10.8 3.5a6.7 6.7 0 0 0 9.7 9.7z" /></svg></span>
+                        </button>
+                    </div>
                 </header>
 
                 <!-- 常驻合计条 -->
@@ -89,7 +98,10 @@
                                 </div>
                                 <div class="form-item input-container printer-input-container">
                                     <label class="label" for="customPrinterName">自定义型号</label>
-                                    <input type="text" id="customPrinterName" placeholder="输入型号" class="input">
+                                    <div class="input-with-btn">
+                                        <input type="text" id="customPrinterName" placeholder="输入型号" class="input">
+                                        <button class="mini-btn" id="savePrinterBtn" type="button" title="把当前机型与参数存为常用机型">存为机型</button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -264,8 +276,7 @@
                 <p class="price-tip">可修改预设单价，或添加自己的耗材；保存在本地，也可以导出成配置文件备份。<strong>导入会覆盖当前配置。</strong></p>
 
                 <div class="cat-toolbar">
-                    <button class="mini-btn" id="importBtn" type="button">导入配置</button>
-                    <button class="mini-btn" id="exportBtn" type="button">导出配置</button>
+                    <button class="mini-btn" id="dataBackupBtn" type="button">数据与备份</button>
                     <button class="mini-btn danger" id="priceResetBtn" type="button">恢复默认</button>
                 </div>
 
@@ -275,8 +286,6 @@
                 <div class="cat-section-title">自定义耗材</div>
                 <div class="custom-list" id="customList"></div>
                 <button class="add-row" id="addCustomBtn" type="button">＋ 添加自定义耗材</button>
-
-                <input type="file" id="importFile" accept=".json,application/json" hidden>
             </div>
             <div class="modal-footer">
                 <button class="modal-btn cancel" id="priceCancelBtn" type="button">取消</button>
@@ -285,13 +294,35 @@
         </div>
     </div>
 
+    <!-- 数据与备份 -->
+    <div class="modal" id="backupModal">
+        <div class="modal-content backup-modal" role="dialog" aria-modal="true" aria-labelledby="backupTitle">
+            <div class="modal-header">
+                <span class="modal-title" id="backupTitle">数据与备份</span>
+            </div>
+            <div class="modal-body">
+                <p class="price-tip">勾选要包含的数据。导出会写入所选区块；导入只应用勾选的区块。</p>
+                <div class="section-list" id="backupSections"></div>
+                <p class="backup-note">耗材与机型会被文件中的配置覆盖；历史记录按时间合并去重，不会重复。</p>
+                <input type="file" id="backupFile" accept=".json,application/json" hidden>
+            </div>
+            <div class="modal-footer backup-footer">
+                <button class="modal-btn cancel" id="backupCloseBtn" type="button">关闭</button>
+                <button class="modal-btn cancel" id="backupImportBtn" type="button">导入所选</button>
+                <button class="modal-btn confirm" id="backupExportBtn" type="button">导出所选</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/theme.js"></script>
     <script src="js/config.js"></script>
     <script src="js/filament-catalog.js"></script>
+    <script src="js/printer-catalog.js"></script>
     <script src="js/calculator.js"></script>
     <script src="js/share.js"></script>
     <script src="js/index.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/backup.js"></script>
 </body>
 
 </html>

@@ -376,6 +376,46 @@ html:not([data-theme-mode]) .theme-toggle .icon-auto {
     display: block;
 }
 
+/* 头部动作区（主题切换 / 数据与备份等） */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+}
+
+.icon-btn {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--surface-2);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color var(--dur) var(--ease), background var(--dur) var(--ease),
+        border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+
+.icon-btn:hover {
+    color: var(--brand-strong);
+    border-color: var(--brand);
+    background: var(--brand-soft);
+}
+
+.icon-btn:active {
+    transform: scale(0.94);
+}
+
+.icon-btn svg {
+    display: block;
+    width: 19px;
+    height: 19px;
+}
+
 /* --------------------------------------------------------------------------
    4. 卡片
    -------------------------------------------------------------------------- */

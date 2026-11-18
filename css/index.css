@@ -1072,6 +1072,130 @@
     font-size: 13px;
 }
 
+/* 自定义机型：输入框 + 存为机型 */
+.input-with-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.input-with-btn .input {
+    flex: 1;
+    min-width: 0;
+}
+
+.input-with-btn .mini-btn {
+    flex: 0 0 auto;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: var(--radius-sm);
+    font-size: 12.5px;
+}
+
+/* --------------------------------------------------------------------------
+   数据与备份
+   -------------------------------------------------------------------------- */
+.backup-modal {
+    display: flex;
+    flex-direction: column;
+    max-width: 420px;
+    max-height: calc(100vh - 48px);
+}
+
+.backup-modal .modal-header,
+.backup-modal .modal-footer {
+    flex: 0 0 auto;
+}
+
+.backup-modal .modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 14px 16px 16px;
+    overflow-y: auto;
+}
+
+.section-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.section-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 11px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    cursor: pointer;
+    transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+
+.section-row:hover {
+    border-color: var(--brand);
+}
+
+.section-check {
+    width: 18px;
+    height: 18px;
+    margin: 1px 0 0;
+    flex: 0 0 18px;
+    accent-color: var(--brand);
+    cursor: pointer;
+}
+
+.section-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.section-head b {
+    font-size: 13.5px;
+    font-weight: 650;
+    color: var(--text);
+    white-space: nowrap;
+}
+
+.section-sum {
+    font-style: normal;
+    font-size: 11.5px;
+    color: var(--brand-strong);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.section-text small {
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--text-subtle);
+}
+
+.backup-note {
+    margin: 0;
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: var(--text-subtle);
+}
+
+.backup-footer .modal-btn {
+    padding: 0 8px;
+    font-size: 13.5px;
+}
+
 /* --------------------------------------------------------------------------
    桌面端
    -------------------------------------------------------------------------- */
