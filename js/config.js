@@ -1,5 +1,5 @@
 const config = {
-    version: "1.8.0",
+    version: "1.9.0",
     lastUpdated: "2026-11-17",
     // 默认配置
     defaults: {

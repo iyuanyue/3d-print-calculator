@@ -47,7 +47,7 @@
                         <span class="brand-mark" aria-hidden="true">3D</span>
                         <div class="brand-text">
                             <h1 class="brand-title">3D打印计算器</h1>
-                            <p class="brand-sub">成本预估 · <strong>v1.8.0</strong></p>
+                            <p class="brand-sub">成本预估 · <strong>v1.9.0</strong></p>
                         </div>
                     </div>
                     <div class="header-actions">
@@ -318,6 +318,24 @@
         </div>
     </div>
 
+    <!-- 切换机型前的保存询问 -->
+    <div class="modal" id="switchModal">
+        <div class="modal-content switch-modal" role="dialog" aria-modal="true" aria-labelledby="switchTitle">
+            <div class="modal-header">
+                <span class="modal-title" id="switchTitle">保存修改？</span>
+            </div>
+            <div class="modal-body">
+                <p class="price-tip">这台设备的参数被你改过，切换前要不要保存为预设？</p>
+                <div class="switch-diff" id="switchDiff"></div>
+            </div>
+            <div class="modal-footer switch-footer">
+                <button class="modal-btn cancel" id="switchCancelBtn" type="button">取消切换</button>
+                <button class="modal-btn cancel" id="switchIgnoreBtn" type="button">不保存</button>
+                <button class="modal-btn confirm" id="switchSaveBtn" type="button">保存并切换</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/theme.js"></script>
     <script src="js/config.js"></script>
     <script src="js/filament-catalog.js"></script>
@@ -326,6 +344,7 @@
     <script src="js/share.js"></script>
     <script src="js/index.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/printer-switch-guard.js"></script>
     <script src="js/backup.js"></script>
 </body>
 
