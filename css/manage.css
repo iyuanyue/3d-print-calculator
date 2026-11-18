@@ -111,28 +111,42 @@
 }
 
 .m-del,
-.m-reset {
-    display: grid;
-    place-items: center;
+.m-reset,
+.m-dup,
+.m-hide,
+.m-unhide {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     flex: 0 0 auto;
-    min-width: 28px;
-    height: 28px;
+    height: 26px;
     padding: 0 8px;
     border: 1px solid var(--border);
     border-radius: var(--radius-pill);
     background: var(--surface);
     color: var(--text-subtle);
     font-family: inherit;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     line-height: 1;
+    white-space: nowrap;
     cursor: pointer;
     transition: all var(--dur) var(--ease);
 }
 
+.m-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    flex-wrap: wrap;
+    flex: 0 0 auto;
+}
+
 .m-del {
-    font-size: 16px;
+    width: 26px;
     padding: 0;
+    font-size: 15px;
 }
 
 .m-del:hover {
@@ -141,10 +155,18 @@
     color: var(--danger-ink);
 }
 
-.m-reset:hover {
+.m-reset:hover,
+.m-dup:hover,
+.m-unhide:hover {
     border-color: var(--brand);
     background: var(--brand-soft);
     color: var(--brand-strong);
+}
+
+.m-hide:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-3);
+    color: var(--text);
 }
 
 .m-reset {
@@ -152,8 +174,63 @@
 }
 
 .manage-row.is-overridden .m-reset {
-    display: grid;
-    place-items: center;
+    display: inline-flex;
+}
+
+/* 只读名称（隐藏区使用） */
+.m-name.static {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    color: var(--text-muted);
+}
+
+/* 已隐藏机型 */
+.hidden-devices {
+    margin: 0 12px 8px;
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    overflow: hidden;
+}
+
+.hidden-devices[hidden] {
+    display: none;
+}
+
+.hidden-devices > summary {
+    padding: 10px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-subtle);
+    cursor: pointer;
+    list-style: none;
+}
+
+.hidden-devices > summary::-webkit-details-marker {
+    display: none;
+}
+
+.hidden-devices > summary::after {
+    content: "▾";
+    float: right;
+    font-size: 10px;
+}
+
+.hidden-devices[open] > summary::after {
+    content: "▴";
+}
+
+.hidden-devices .manage-list {
+    border-top: 1px solid var(--border);
+}
+
+.hidden-devices .manage-row {
+    padding: 8px 12px;
+}
+
+.hidden-devices .manage-row + .manage-row {
+    border-top: 1px solid var(--border);
 }
 
 /* 第二行：数值字段 */
@@ -339,7 +416,7 @@
     }
 
     .manage-row:not(.filament-row) .m-head {
-        flex: 0 0 268px;
+        flex: 0 0 340px;
     }
 
     .manage-row:not(.filament-row) .m-fields {

@@ -29,6 +29,7 @@
 
     var overrides = {};
     var custom = [];
+    var hidden = [];
 
     function toNum(v) {
         var n = Number(v);
@@ -70,6 +71,7 @@
 
         overrides = {};
         custom = [];
+        hidden = [];
 
         if (raw.overrides && typeof raw.overrides === 'object') {
             Object.keys(raw.overrides).forEach(function (k) {
@@ -93,18 +95,29 @@
             });
         }
         custom = custom.slice(0, MAX_CUSTOM);
+
+        if (Array.isArray(raw.hidden)) {
+            raw.hidden.forEach(function (id) {
+                if (!presetById(id)) return;
+                if (hidden.indexOf(String(id)) < 0) hidden.push(String(id));
+            });
+        }
     }
 
     function persist() {
         try {
-            var empty = Object.keys(overrides).length === 0 && custom.length === 0;
+            var empty = Object.keys(overrides).length === 0 && custom.length === 0 && hidden.length === 0;
             if (empty) localStorage.removeItem(KEY);
-            else localStorage.setItem(KEY, JSON.stringify({ v: 1, overrides: overrides, custom: custom }));
+            else localStorage.setItem(KEY, JSON.stringify({ v: 1, overrides: overrides, custom: custom, hidden: hidden }));
         } catch (e) { /* 忽略 */ }
     }
 
     function apply() {
-        var list = PRESET_DEFAULTS.map(function (p) {
+        var previous = cfg.printers ? cfg.printers.slice() : [];
+
+        var list = PRESET_DEFAULTS.filter(function (p) {
+            return hidden.indexOf(p.id) < 0;
+        }).map(function (p) {
             var o = overrides[p.id] || {};
             return {
                 id: p.id,
@@ -129,6 +142,33 @@
             });
         });
         cfg.printers = list;
+        remapSavedSelection(previous, list);
+    }
+
+    /* 机型顺序变化后，修正「上次使用参数」里记录的机型下标 */
+    function remapSavedSelection(previous, next) {
+        try {
+            var raw = localStorage.getItem('lastCalculationSettings');
+            if (!raw) return;
+            var settings = JSON.parse(raw);
+            if (!settings || settings.printerIndex === undefined) return;
+            if (settings.printerIndex === 'other' || settings.printerIndex === null) return;
+
+            var idx = Number(settings.printerIndex);
+            if (!isFinite(idx) || idx < 0 || idx >= previous.length) return;
+
+            var name = previous[idx] && previous[idx].name;
+            if (!name) return;
+
+            var nextIndex = -1;
+            for (var i = 0; i < next.length; i++) {
+                if (next[i].name === name) { nextIndex = i; break; }
+            }
+            if (nextIndex !== idx) {
+                settings.printerIndex = nextIndex;
+                localStorage.setItem('lastCalculationSettings', JSON.stringify(settings));
+            }
+        } catch (e) { /* 忽略 */ }
     }
 
     function refreshSelects() {
@@ -169,7 +209,8 @@
     function getData() {
         return {
             overrides: JSON.parse(JSON.stringify(overrides)),
-            custom: custom.map(function (c) { return Object.assign({}, c); })
+            custom: custom.map(function (c) { return Object.assign({}, c); }),
+            hidden: hidden.slice()
         };
     }
 
@@ -179,6 +220,17 @@
         }
         var nextOverrides = {};
         var nextCustom = [];
+        var nextHidden = [];
+
+        var rawHidden = raw.hidden;
+        if (rawHidden !== undefined) {
+            if (!Array.isArray(rawHidden)) return { error: 'printers.hidden 必须是数组' };
+            if (rawHidden.length > PRESET_DEFAULTS.length) return { error: '隐藏机型数量异常' };
+            for (var h = 0; h < rawHidden.length; h++) {
+                var hid = String(rawHidden[h]);
+                if (presetById(hid) && nextHidden.indexOf(hid) < 0) nextHidden.push(hid);
+            }
+        }
 
         var rawOverrides = raw.overrides;
         if (rawOverrides !== undefined) {
@@ -234,7 +286,7 @@
             }
         }
 
-        return { overrides: nextOverrides, custom: nextCustom };
+        return { overrides: nextOverrides, custom: nextCustom, hidden: nextHidden };
     }
 
     function setData(data) {
@@ -242,6 +294,7 @@
         if (parsed.error) return parsed;
         overrides = parsed.overrides;
         custom = parsed.custom;
+        hidden = parsed.hidden || [];
         persist();
         apply();
         refreshSelects();
@@ -284,7 +337,9 @@
     }
 
     function getList() {
-        var list = PRESET_DEFAULTS.map(function (p) {
+        var list = PRESET_DEFAULTS.filter(function (p) {
+            return hidden.indexOf(p.id) < 0;
+        }).map(function (p) {
             var o = overrides[p.id] || {};
             return {
                 id: p.id,
@@ -292,7 +347,7 @@
                 power: has(o, 'power') ? o.power : p.power,
                 cost: has(o, 'cost') ? o.cost : p.cost,
                 lifespan: has(o, 'lifespan') ? o.lifespan : p.lifespan,
-                defaults: { power: p.power, cost: p.cost, lifespan: p.lifespan },
+                defaults: { power: p.power, cost: p.cost, lifespan: p.lifespan, name: p.name },
                 brand: p.brand,
                 custom: false,
                 overridden: Object.keys(o).length > 0
@@ -312,6 +367,21 @@
             });
         });
         return list;
+    }
+
+    function getHidden() {
+        return PRESET_DEFAULTS.filter(function (p) {
+            return hidden.indexOf(p.id) >= 0;
+        }).map(function (p) {
+            var o = overrides[p.id] || {};
+            return {
+                id: p.id,
+                name: has(o, 'name') ? o.name : p.name,
+                power: has(o, 'power') ? o.power : p.power,
+                cost: has(o, 'cost') ? o.cost : p.cost,
+                lifespan: has(o, 'lifespan') ? o.lifespan : p.lifespan
+            };
+        });
     }
 
     function setPresetField(id, field, raw) {
@@ -346,6 +416,73 @@
         return { ok: true };
     }
 
+    /* 重命名：预设写入 overrides.name，自定义直接改 */
+    function setName(id, raw) {
+        var name = String(raw === undefined ? '' : raw).trim().slice(0, 30);
+        if (!name) return { error: '名称不能为空' };
+
+        var preset = presetById(id);
+        if (preset) {
+            var key = String(id);
+            var next = Object.assign({}, overrides[key] || {});
+            if (name === preset.name) delete next.name;
+            else next.name = name;
+            var empty = !next.name && next.power === undefined && next.cost === undefined && next.lifespan === undefined;
+            if (empty) delete overrides[key];
+            else overrides[key] = next;
+            afterChange();
+            return { ok: true };
+        }
+        return updateCustom(id, { name: name });
+    }
+
+    /* 复制一个机型（预设或自定义都行），生成本地自定义副本 */
+    function duplicate(id) {
+        var list = getList();
+        var source = null;
+        for (var i = 0; i < list.length; i++) {
+            if (String(list[i].id) === String(id)) { source = list[i]; break; }
+        }
+        if (!source) {
+            var hiddenPreset = presetById(id);
+            if (hiddenPreset && hidden.indexOf(String(id)) >= 0) {
+                var o = overrides[String(id)] || {};
+                source = {
+                    name: has(o, 'name') ? o.name : hiddenPreset.name,
+                    power: has(o, 'power') ? o.power : hiddenPreset.power,
+                    cost: has(o, 'cost') ? o.cost : hiddenPreset.cost,
+                    lifespan: has(o, 'lifespan') ? o.lifespan : hiddenPreset.lifespan
+                };
+            }
+        }
+        if (!source) return { error: '未找到该机型' };
+
+        var names = list.map(function (i) { return i.name; });
+        var base = source.name + ' 副本';
+        var name = base;
+        for (var n = 2; n < 100 && names.indexOf(name) >= 0; n++) name = base + ' ' + n;
+
+        var result = addCustom(name, source.power, source.cost, source.lifespan);
+        if (result && result.ok) result.name = name;
+        return result;
+    }
+
+    function hide(id) {
+        if (!presetById(id)) return { error: '只有预设机型可以隐藏' };
+        if (hidden.indexOf(String(id)) >= 0) return { ok: true, noop: true };
+        hidden.push(String(id));
+        afterChange();
+        return { ok: true };
+    }
+
+    function unhide(id) {
+        var before = hidden.length;
+        hidden = hidden.filter(function (h) { return h !== String(id); });
+        if (hidden.length === before) return { ok: true, noop: true };
+        afterChange();
+        return { ok: true };
+    }
+
     function updateCustom(id, patch) {
         for (var i = 0; i < custom.length; i++) {
             if (custom[i].id !== String(id)) continue;
@@ -371,6 +508,7 @@
     function resetAll() {
         overrides = {};
         custom = [];
+        hidden = [];
         afterChange();
         return { ok: true };
     }
@@ -422,8 +560,13 @@
         parseData: parseData,
         setData: setData,
         getList: getList,
+        getHidden: getHidden,
         setPresetField: setPresetField,
         resetPreset: resetPreset,
+        setName: setName,
+        duplicate: duplicate,
+        hide: hide,
+        unhide: unhide,
         addCustom: addCustom,
         updateCustom: updateCustom,
         removeCustom: removeCustom,

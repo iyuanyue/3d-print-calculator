@@ -94,13 +94,22 @@
         name.value = item.name;
         name.maxLength = 30;
         name.setAttribute('aria-label', '机型名称');
-        if (!item.custom) name.readOnly = true;
 
         head.appendChild(name);
         head.appendChild(el('span', 'm-badge' + (item.custom ? ' custom' : ''), item.custom ? '自定义' : '预设'));
-        head.appendChild(item.custom
-            ? iconButton('m-del', '×', '删除「' + item.name + '」')
-            : iconButton('m-reset', '重置', '恢复「' + item.name + '」的官方参数'));
+
+        var actions = el('div', 'm-actions');
+        if (!item.custom) {
+            // 始终渲染，未改动时由 CSS 隐藏；这样改完参数后无需整行重建就能出现「重置」
+            actions.appendChild(iconButton('m-reset', '重置', '恢复「' + item.name + '」的官方参数'));
+        }
+        actions.appendChild(iconButton('m-dup', '复制', '复制「' + item.name + '」为新的自定义机型'));
+        if (item.custom) {
+            actions.appendChild(iconButton('m-del', '×', '删除「' + item.name + '」'));
+        } else {
+            actions.appendChild(iconButton('m-hide', '隐藏', '从机型下拉中隐藏「' + item.name + '」'));
+        }
+        head.appendChild(actions);
 
         var fields = el('div', 'm-fields');
         fields.appendChild(numField('功率', 'W', item.power, 'power'));
@@ -109,6 +118,22 @@
 
         row.appendChild(head);
         row.appendChild(fields);
+        return row;
+    }
+
+    function hiddenRow(item) {
+        var row = el('div', 'manage-row hidden-row');
+        row.setAttribute('data-id', item.id);
+
+        var head = el('div', 'm-head');
+        var name = el('span', 'm-name static', item.name);
+        head.appendChild(name);
+        head.appendChild(el('span', 'm-badge', '已隐藏'));
+        var actions = el('div', 'm-actions');
+        actions.appendChild(iconButton('m-unhide', '恢复', '恢复「' + item.name + '」到机型下拉'));
+        head.appendChild(actions);
+
+        row.appendChild(head);
         return row;
     }
 
@@ -124,6 +149,22 @@
         var count = $('#printerCount');
         if (count) {
             count.textContent = items.length + ' 个机型' + (custom ? ' · ' + custom + ' 个自定义' : '');
+        }
+
+        var hiddenItems = api && typeof api.getHidden === 'function' ? api.getHidden() : [];
+        var box = $('#hiddenDevices');
+        var hiddenList = $('#hiddenList');
+        if (box && hiddenList) {
+            hiddenList.innerHTML = '';
+            if (hiddenItems.length === 0) {
+                box.hidden = true;
+                box.removeAttribute('open');
+            } else {
+                box.hidden = false;
+                hiddenItems.forEach(function (item) { hiddenList.appendChild(hiddenRow(item)); });
+                var label = $('#hiddenCount');
+                if (label) label.textContent = '已隐藏 ' + hiddenItems.length + ' 个机型';
+            }
         }
     }
 
@@ -257,8 +298,9 @@
 
     function handleNameChange(input) {
         var row = input.closest('.manage-row');
-        if (!row || row.getAttribute('data-kind') !== 'custom') return;
-        var kind = row.closest('#printerList') ? 'printer' : 'filament';
+        if (!row) return;
+        var kind = row.closest('#printerList') || row.closest('#hiddenList') ? 'printer' : 'filament';
+        var isCustom = row.getAttribute('data-kind') === 'custom';
         var api = kind === 'printer' ? PC() : FC();
         if (!api) return;
         var value = input.value.trim();
@@ -267,7 +309,16 @@
             syncRow(row, kind, row.getAttribute('data-id'));
             return;
         }
-        var result = api.updateCustom(row.getAttribute('data-id'), { name: value });
+
+        var result;
+        if (kind === 'printer') {
+            result = api.setName(row.getAttribute('data-id'), value);
+        } else if (isCustom) {
+            result = api.updateCustom(row.getAttribute('data-id'), { name: value });
+        } else {
+            return;
+        }
+
         if (result && result.error) {
             toast(result.error, 'error');
             syncRow(row, kind, row.getAttribute('data-id'));
@@ -275,7 +326,6 @@
         }
         toast('已保存');
         syncRow(row, kind, row.getAttribute('data-id'));
-        // 名称变化会影响首页下拉，重渲染计数即可
         if (kind === 'printer') renderPrinters(); else renderFilaments();
     }
 
@@ -291,7 +341,7 @@
     function handleAction(btn) {
         var row = btn.closest('.manage-row');
         if (!row) return;
-        var kind = row.closest('#printerList') ? 'printer' : 'filament';
+        var kind = row.closest('#filamentList') ? 'filament' : 'printer';
         var api = kind === 'printer' ? PC() : FC();
         if (!api) return;
         var id = row.getAttribute('data-id');
@@ -302,11 +352,42 @@
             if (result && result.error) { toast(result.error, 'error'); return; }
             toast('已删除「' + (item ? item.name : '') + '」');
             if (kind === 'printer') renderPrinters(); else renderFilaments();
-        } else if (btn.classList.contains('m-reset')) {
+            return;
+        }
+
+        if (btn.classList.contains('m-reset')) {
             var reset = api.resetPreset(id);
             if (reset && reset.error) { toast(reset.error, 'error'); return; }
             toast('已恢复「' + (item ? item.name : '') + '」的默认值');
             if (kind === 'printer') renderPrinters(); else renderFilaments();
+            return;
+        }
+
+        if (btn.classList.contains('m-dup')) {
+            if (typeof api.duplicate !== 'function') return;
+            var dup = api.duplicate(id);
+            if (dup && dup.error) { toast(dup.error, 'error'); return; }
+            renderPrinters();
+            if (dup && dup.id) focusRow(dup.id);
+            toast('已复制为「' + (dup && dup.name ? dup.name : '新机型') + '」');
+            return;
+        }
+
+        if (btn.classList.contains('m-hide')) {
+            if (typeof api.hide !== 'function') return;
+            var hid = api.hide(id);
+            if (hid && hid.error) { toast(hid.error, 'error'); return; }
+            toast('已隐藏「' + (item ? item.name : '') + '」，可在下方恢复');
+            renderPrinters();
+            return;
+        }
+
+        if (btn.classList.contains('m-unhide')) {
+            if (typeof api.unhide !== 'function') return;
+            var unhid = api.unhide(id);
+            if (unhid && unhid.error) { toast(unhid.error, 'error'); return; }
+            toast('已恢复该机型');
+            renderPrinters();
         }
     }
 
@@ -415,8 +496,10 @@
 
         list.addEventListener('click', function (e) {
             var target = e.target;
-            if (!target) return;
-            if (target.classList.contains('m-del') || target.classList.contains('m-reset')) {
+            if (!target || !target.classList) return;
+            if (target.classList.contains('m-del') || target.classList.contains('m-reset') ||
+                target.classList.contains('m-dup') || target.classList.contains('m-hide') ||
+                target.classList.contains('m-unhide')) {
                 handleAction(target);
             }
         });
@@ -425,6 +508,14 @@
     function init() {
         bindList('printerList', handleNumberChange, handleNameChange, handleColorChange);
         bindList('filamentList', handleNumberChange, handleNameChange, handleColorChange);
+
+        var hiddenList = $('#hiddenList');
+        if (hiddenList) {
+            hiddenList.addEventListener('click', function (e) {
+                var target = e.target;
+                if (target && target.classList.contains('m-unhide')) handleAction(target);
+            });
+        }
 
         var addP = $('#addPrinterBtn');
         if (addP) addP.addEventListener('click', addPrinter);
