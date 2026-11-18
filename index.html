@@ -47,7 +47,7 @@
                         <span class="brand-mark" aria-hidden="true">3D</span>
                         <div class="brand-text">
                             <h1 class="brand-title">3D打印计算器</h1>
-                            <p class="brand-sub">成本预估 · <strong>v1.4.1</strong></p>
+                            <p class="brand-sub">成本预估 · <strong>v1.5.0</strong></p>
                         </div>
                     </div>
                     <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换主题">
@@ -254,19 +254,32 @@
         </div>
     </div>
 
-    <!-- 耗材预设价格 -->
-    <div class="modal" id="priceModal">
-        <div class="modal-content price-modal" role="dialog" aria-modal="true" aria-labelledby="priceModalTitle">
+    <!-- 耗材设置：预设价格 / 自定义耗材 / 导入导出 -->
+    <div class="modal" id="filamentModal">
+        <div class="modal-content filament-modal" role="dialog" aria-modal="true" aria-labelledby="filamentModalTitle">
             <div class="modal-header">
-                <span class="modal-title" id="priceModalTitle">耗材预设价格</span>
+                <span class="modal-title" id="filamentModalTitle">耗材设置</span>
             </div>
             <div class="modal-body">
-                <p class="price-tip">修改后，选择该耗材会自动填入新价格；只影响以后的填写，不改动已保存的历史记录。</p>
-                <div class="price-list" id="priceList"></div>
+                <p class="price-tip">可修改预设单价，或添加自己的耗材；保存在本地，也可以导出成配置文件备份。<strong>导入会覆盖当前配置。</strong></p>
+
+                <div class="cat-toolbar">
+                    <button class="mini-btn" id="importBtn" type="button">导入配置</button>
+                    <button class="mini-btn" id="exportBtn" type="button">导出配置</button>
+                    <button class="mini-btn danger" id="priceResetBtn" type="button">恢复默认</button>
+                </div>
+
+                <div class="cat-section-title">预设耗材</div>
+                <div class="price-list" id="presetList"></div>
+
+                <div class="cat-section-title">自定义耗材</div>
+                <div class="custom-list" id="customList"></div>
+                <button class="add-row" id="addCustomBtn" type="button">＋ 添加自定义耗材</button>
+
+                <input type="file" id="importFile" accept=".json,application/json" hidden>
             </div>
             <div class="modal-footer">
                 <button class="modal-btn cancel" id="priceCancelBtn" type="button">取消</button>
-                <button class="modal-btn cancel" id="priceResetBtn" type="button">恢复默认</button>
                 <button class="modal-btn confirm" id="priceSaveBtn" type="button">保存</button>
             </div>
         </div>
@@ -274,7 +287,7 @@
 
     <script src="js/theme.js"></script>
     <script src="js/config.js"></script>
-    <script src="js/filament-prices.js"></script>
+    <script src="js/filament-catalog.js"></script>
     <script src="js/calculator.js"></script>
     <script src="js/share.js"></script>
     <script src="js/index.js"></script>
