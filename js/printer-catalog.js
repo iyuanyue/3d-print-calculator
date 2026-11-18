@@ -269,8 +269,109 @@
         refreshSelects();
 
         for (var j = 0; j < cfg.printers.length; j++) {
-            if (cfg.printers[j].id === item.id) return { ok: true, index: j, replaced: existing >= 0 };
+            if (cfg.printers[j].id === item.id) return { ok: true, index: j, replaced: existing >= 0, id: item.id };
         }
+        return { ok: true, id: item.id };
+    }
+
+    /* ---------------------------------------------------------------------
+       单条维护（管理页使用）
+       --------------------------------------------------------------------- */
+    function afterChange() {
+        persist();
+        apply();
+        refreshSelects();
+    }
+
+    function getList() {
+        var list = PRESET_DEFAULTS.map(function (p) {
+            var o = overrides[p.id] || {};
+            return {
+                id: p.id,
+                name: has(o, 'name') ? o.name : p.name,
+                power: has(o, 'power') ? o.power : p.power,
+                cost: has(o, 'cost') ? o.cost : p.cost,
+                lifespan: has(o, 'lifespan') ? o.lifespan : p.lifespan,
+                defaults: { power: p.power, cost: p.cost, lifespan: p.lifespan },
+                brand: p.brand,
+                custom: false,
+                overridden: Object.keys(o).length > 0
+            };
+        });
+        custom.forEach(function (c) {
+            list.push({
+                id: c.id,
+                name: c.name,
+                power: c.power,
+                cost: c.cost,
+                lifespan: c.lifespan,
+                defaults: null,
+                brand: '自定义',
+                custom: true,
+                overridden: false
+            });
+        });
+        return list;
+    }
+
+    function setPresetField(id, field, raw) {
+        var preset = presetById(id);
+        if (!preset) return { error: '未知机型' };
+        if (['power', 'cost', 'lifespan'].indexOf(field) < 0) return { error: '未知参数' };
+        var n = Number(raw);
+        if (!isFinite(n) || n < 0) return { error: '请填写不小于 0 的数字' };
+
+        var key = String(id);
+        var next = Object.assign({}, overrides[key] || {});
+        next[field] = n;
+
+        var same = true;
+        ['power', 'cost', 'lifespan'].forEach(function (f) {
+            var v = next[f] !== undefined ? next[f] : preset[f];
+            if (v !== preset[f]) same = false;
+        });
+
+        if (same) delete overrides[key];
+        else overrides[key] = next;
+
+        afterChange();
+        return { ok: true };
+    }
+
+    function resetPreset(id) {
+        var key = String(id);
+        if (!has(overrides, key)) return { ok: true, noop: true };
+        delete overrides[key];
+        afterChange();
+        return { ok: true };
+    }
+
+    function updateCustom(id, patch) {
+        for (var i = 0; i < custom.length; i++) {
+            if (custom[i].id !== String(id)) continue;
+            var merged = Object.assign({}, custom[i], patch);
+            var next = normalizeCustom(merged);
+            if (!next) return { error: '名称不能为空' };
+            next.id = custom[i].id;
+            custom[i] = next;
+            afterChange();
+            return { ok: true };
+        }
+        return { error: '未找到该机型' };
+    }
+
+    function removeCustom(id) {
+        var before = custom.length;
+        custom = custom.filter(function (c) { return c.id !== String(id); });
+        if (custom.length === before) return { error: '未找到该机型' };
+        afterChange();
+        return { ok: true };
+    }
+
+    function resetAll() {
+        overrides = {};
+        custom = [];
+        afterChange();
         return { ok: true };
     }
 
@@ -320,7 +421,13 @@
         getData: getData,
         parseData: parseData,
         setData: setData,
+        getList: getList,
+        setPresetField: setPresetField,
+        resetPreset: resetPreset,
         addCustom: addCustom,
+        updateCustom: updateCustom,
+        removeCustom: removeCustom,
+        resetAll: resetAll,
         refreshSelects: refreshSelects,
         defaults: PRESET_DEFAULTS.map(function (p) { return Object.assign({}, p); }),
         count: function () { return custom.length; }

@@ -177,6 +177,10 @@
     var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
 
     function toast(message, type) {
+        if (typeof window.AppToast === 'function') {
+            window.AppToast(message, type || 'success');
+            return;
+        }
         if (window.indexPage && typeof window.indexPage.showToast === 'function') {
             window.indexPage.showToast(message, type || 'success');
         } else {
@@ -561,6 +565,107 @@
     }
 
     /* ---------------------------------------------------------------------
+       单条维护（管理页使用）
+       --------------------------------------------------------------------- */
+    function afterChange() {
+        persist();
+        applyToConfig();
+        refreshSelects();
+        updateBadge();
+        rebuildModal();
+        if (window.indexPage) {
+            if (typeof window.indexPage.calculateCost === 'function') window.indexPage.calculateCost();
+            if (typeof window.indexPage.saveCurrentSettings === 'function') window.indexPage.saveCurrentSettings();
+        }
+    }
+
+    function getList() {
+        var list = PRESET_DEFAULTS.map(function (p) {
+            return {
+                id: p.id,
+                name: p.name,
+                price: effectivePresetPrice(p),
+                defaultPrice: p.price,
+                color: p.color,
+                type: p.type,
+                custom: false,
+                overridden: has(presetPrices, p.id)
+            };
+        });
+        customItems.forEach(function (c) {
+            list.push({
+                id: c.id,
+                name: c.name,
+                price: c.price,
+                defaultPrice: null,
+                color: c.color,
+                type: c.type || 'standard',
+                custom: true,
+                overridden: false
+            });
+        });
+        return list;
+    }
+
+    function setPresetPrice(id, raw) {
+        var preset = byId(id);
+        if (!preset) return { error: '未知耗材' };
+        var n = Number(raw);
+        if (!isFinite(n) || n < 0) return { error: '单价请填写不小于 0 的数字' };
+        var key = String(id);
+        if (toPrice(n) === preset.price) delete presetPrices[key];
+        else presetPrices[key] = toPrice(n);
+        afterChange();
+        return { ok: true };
+    }
+
+    function resetPreset(id) {
+        var key = String(id);
+        if (!has(presetPrices, key)) return { ok: true, noop: true };
+        delete presetPrices[key];
+        afterChange();
+        return { ok: true };
+    }
+
+    function addCustom2(data) {
+        var item = normalizeCustom(data);
+        if (!item) return { error: '请填写名称' };
+        if (customItems.length >= MAX_CUSTOM) return { error: '自定义耗材最多 ' + MAX_CUSTOM + ' 项' };
+        customItems.push(item);
+        afterChange();
+        return { ok: true, id: item.id };
+    }
+
+    function updateCustom(id, patch) {
+        for (var i = 0; i < customItems.length; i++) {
+            if (customItems[i].id !== String(id)) continue;
+            var merged = Object.assign({}, customItems[i], patch);
+            var next = normalizeCustom(merged);
+            if (!next) return { error: '名称不能为空' };
+            next.id = customItems[i].id;
+            customItems[i] = next;
+            afterChange();
+            return { ok: true };
+        }
+        return { error: '未找到该耗材' };
+    }
+
+    function removeCustom(id) {
+        var before = customItems.length;
+        customItems = customItems.filter(function (c) { return c.id !== String(id); });
+        if (customItems.length === before) return { error: '未找到该耗材' };
+        afterChange();
+        return { ok: true };
+    }
+
+    function resetAll() {
+        presetPrices = {};
+        customItems = [];
+        afterChange();
+        return { ok: true };
+    }
+
+    /* ---------------------------------------------------------------------
        事件绑定
        --------------------------------------------------------------------- */
     function bind() {
@@ -663,6 +768,13 @@
         getData: getData,
         parseData: parseData,
         setData: setData,
+        getList: getList,
+        setPresetPrice: setPresetPrice,
+        resetPreset: resetPreset,
+        addCustom: addCustom2,
+        updateCustom: updateCustom,
+        removeCustom: removeCustom,
+        resetAll: resetAll,
         refreshOptions: refreshSelects,
         rebuildModal: rebuildModal,
         defaults: PRESET_DEFAULTS.map(function (p) { return Object.assign({}, p); }),

@@ -1,0 +1,400 @@
+/* ==========================================================================
+   预设管理页：打印机 / 耗材 内联编辑
+   ========================================================================== */
+
+.manage-shell {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 640px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0 auto;
+    padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 16px);
+}
+
+.manage-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 14px;
+}
+
+.manage-hint {
+    margin: 0 16px 10px;
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: var(--text-subtle);
+}
+
+/* --------------------------------------------------------------------------
+   列表
+   -------------------------------------------------------------------------- */
+.manage-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--border);
+}
+
+.manage-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 14px;
+}
+
+.manage-row + .manage-row {
+    border-top: 1px solid var(--border);
+}
+
+.manage-row.is-overridden {
+    background: linear-gradient(90deg, var(--brand-soft), transparent 60%);
+}
+
+/* 第一行：名称 / 标记 / 操作 */
+.m-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.m-name {
+    flex: 1;
+    min-width: 0;
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-xs);
+    background: transparent;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 650;
+    transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.m-name:hover {
+    background: var(--surface-2);
+}
+
+.m-name:focus {
+    outline: none;
+    border-color: var(--brand);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px var(--ring);
+}
+
+.m-name[readonly] {
+    cursor: default;
+}
+
+.m-name[readonly]:hover {
+    background: transparent;
+}
+
+.m-badge {
+    flex: 0 0 auto;
+    padding: 2px 7px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-3);
+    color: var(--text-subtle);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.m-badge.custom {
+    background: var(--brand-soft);
+    color: var(--brand-strong);
+}
+
+.m-del,
+.m-reset {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--text-subtle);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    transition: all var(--dur) var(--ease);
+}
+
+.m-del {
+    font-size: 16px;
+    padding: 0;
+}
+
+.m-del:hover {
+    border-color: var(--danger);
+    background: var(--danger);
+    color: var(--danger-ink);
+}
+
+.m-reset:hover {
+    border-color: var(--brand);
+    background: var(--brand-soft);
+    color: var(--brand-strong);
+}
+
+.m-reset {
+    display: none;
+}
+
+.manage-row.is-overridden .m-reset {
+    display: grid;
+    place-items: center;
+}
+
+/* 第二行：数值字段 */
+.m-fields {
+    display: flex;
+    gap: 8px;
+}
+
+.m-field {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+}
+
+.m-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-subtle);
+    letter-spacing: 0.02em;
+}
+
+.m-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 36px;
+    padding: 0 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    background: var(--surface-2);
+    transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+
+.m-input-wrap:focus-within {
+    border-color: var(--brand);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px var(--ring);
+}
+
+.m-num {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.m-num:focus {
+    outline: none;
+}
+
+.m-unit {
+    flex: 0 0 auto;
+    font-size: 10.5px;
+    color: var(--text-subtle);
+}
+
+.m-num::-webkit-outer-spin-button,
+.m-num::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.m-num {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* 耗材行：单行紧凑布局 */
+.filament-row {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+}
+
+.filament-row .m-head {
+    gap: 6px;
+}
+
+.m-color {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    background: var(--surface-2);
+    cursor: pointer;
+}
+
+.m-color::-webkit-color-swatch-wrapper {
+    padding: 2px;
+}
+
+.m-color::-webkit-color-swatch {
+    border: none;
+    border-radius: 5px;
+}
+
+.m-color[disabled] {
+    cursor: default;
+    opacity: 0.85;
+}
+
+.filament-row .m-price {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 34px;
+    padding: 0 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    background: var(--surface-2);
+}
+
+.filament-row .m-price:focus-within {
+    border-color: var(--brand);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px var(--ring);
+}
+
+.filament-row .m-price .m-num {
+    width: 56px;
+    flex: 0 0 56px;
+}
+
+/* --------------------------------------------------------------------------
+   底部
+   -------------------------------------------------------------------------- */
+.manage-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0 4px;
+}
+
+.manage-footer .btn {
+    width: 100%;
+    height: 44px;
+}
+
+.manage-footer .btn.armed {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: var(--danger-ink);
+}
+
+.manage-note {
+    font-size: 11px;
+    color: var(--text-subtle);
+    text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   桌面端
+   -------------------------------------------------------------------------- */
+@media (min-width: 900px) {
+    .manage-shell {
+        max-width: 880px;
+        padding: 18px 18px 32px;
+    }
+
+    .manage-body {
+        padding: 0;
+    }
+
+    /* 机型行：名称与参数同一行，更紧凑 */
+    .manage-row:not(.filament-row) {
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+        padding: 10px 16px;
+    }
+
+    .manage-row:not(.filament-row) .m-head {
+        flex: 0 0 268px;
+    }
+
+    .manage-row:not(.filament-row) .m-fields {
+        flex: 1;
+        gap: 10px;
+    }
+
+    .manage-row:not(.filament-row) .m-field {
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .manage-row:not(.filament-row) .m-label {
+        flex: 0 0 auto;
+        font-size: 11px;
+    }
+
+    .manage-row:not(.filament-row) .m-input-wrap {
+        flex: 1;
+        height: 34px;
+    }
+
+    .m-fields {
+        gap: 10px;
+    }
+
+    .manage-row {
+        padding: 10px 16px;
+    }
+
+    .manage-footer {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 16px;
+        padding-top: 10px;
+    }
+
+    .manage-footer .btn {
+        width: auto;
+        flex: 0 0 200px;
+    }
+
+    .manage-note {
+        text-align: left;
+        order: -1;
+    }
+}
+
+@media (max-width: 380px) {
+    .manage-row .m-fields {
+        flex-wrap: wrap;
+    }
+
+    .manage-row .m-field {
+        flex: 1 1 40%;
+    }
+}
