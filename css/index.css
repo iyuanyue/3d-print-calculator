@@ -795,6 +795,143 @@
 }
 
 /* --------------------------------------------------------------------------
+   耗材预设价格
+   -------------------------------------------------------------------------- */
+.panel-head-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    min-width: 0;
+}
+
+.link-btn.has-override::after {
+    content: "";
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-left: 4px;
+    border-radius: 50%;
+    background: var(--brand);
+    vertical-align: middle;
+}
+
+.price-modal {
+    max-width: 380px;
+}
+
+.price-modal .modal-body {
+    padding: 14px 16px 16px;
+}
+
+.price-tip {
+    margin-bottom: 12px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-subtle);
+}
+
+.price-list {
+    display: flex;
+    flex-direction: column;
+    max-height: 46vh;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+}
+
+.price-row {
+    display: grid;
+    grid-template-columns: 12px minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+}
+
+.price-row + .price-row {
+    border-top: 1px solid var(--border);
+}
+
+.price-dot {
+    width: 12px;
+    height: 12px;
+    margin: 0;
+    border-radius: 4px;
+}
+
+.price-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.price-name {
+    font-size: 13px;
+    font-weight: 650;
+    color: var(--text);
+}
+
+.price-meta {
+    font-size: 10.5px;
+    color: var(--text-subtle);
+    font-variant-numeric: tabular-nums;
+}
+
+.price-field {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.price-unit {
+    font-size: 11px;
+    color: var(--text-subtle);
+}
+
+.price-input {
+    width: 70px;
+    height: 34px;
+    padding: 0 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.price-input:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--ring);
+}
+
+.price-input::-webkit-outer-spin-button,
+.price-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.price-input {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.price-badge {
+    padding: 2px 6px;
+    border-radius: var(--radius-pill);
+    background: var(--brand-soft);
+    color: var(--brand-strong);
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
    桌面端
    -------------------------------------------------------------------------- */
 @media (min-width: 900px) {

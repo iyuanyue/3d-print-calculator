@@ -47,7 +47,7 @@
                         <span class="brand-mark" aria-hidden="true">3D</span>
                         <div class="brand-text">
                             <h1 class="brand-title">3D打印计算器</h1>
-                            <p class="brand-sub">成本预估 · <strong>v1.4.0</strong></p>
+                            <p class="brand-sub">成本预估 · <strong>v1.4.1</strong></p>
                         </div>
                     </div>
                     <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换主题">
@@ -119,7 +119,10 @@
                     <section class="panel" id="filamentPanel">
                         <div class="panel-head">
                             <h2 class="panel-title">耗材</h2>
-                            <span class="panel-sub" id="filamentSummaryText">未添加</span>
+                            <div class="panel-head-actions">
+                                <span class="panel-sub" id="filamentSummaryText">未添加</span>
+                                <button class="link-btn" id="filamentPriceBtn" type="button" title="设置耗材预设价格">价格</button>
+                            </div>
                         </div>
                         <div class="filament-rows" id="filamentItemsContainer"></div>
                         <button class="add-row" id="addFilamentBtn" type="button">
@@ -251,8 +254,27 @@
         </div>
     </div>
 
+    <!-- 耗材预设价格 -->
+    <div class="modal" id="priceModal">
+        <div class="modal-content price-modal" role="dialog" aria-modal="true" aria-labelledby="priceModalTitle">
+            <div class="modal-header">
+                <span class="modal-title" id="priceModalTitle">耗材预设价格</span>
+            </div>
+            <div class="modal-body">
+                <p class="price-tip">修改后，选择该耗材会自动填入新价格；只影响以后的填写，不改动已保存的历史记录。</p>
+                <div class="price-list" id="priceList"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" id="priceCancelBtn" type="button">取消</button>
+                <button class="modal-btn cancel" id="priceResetBtn" type="button">恢复默认</button>
+                <button class="modal-btn confirm" id="priceSaveBtn" type="button">保存</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/theme.js"></script>
     <script src="js/config.js"></script>
+    <script src="js/filament-prices.js"></script>
     <script src="js/calculator.js"></script>
     <script src="js/share.js"></script>
     <script src="js/index.js"></script>
